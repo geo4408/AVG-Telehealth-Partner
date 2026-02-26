@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVG Telehealth Partner Tracker</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+.header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header h1 span { color: #38bdf8; }
+.header-actions { display: flex; gap: 10px; }
+.btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+.btn-primary { background: #2563eb; color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-success { background: #059669; color: white; }
+.btn-success:hover { background: #047857; }
+.btn-outline { background: transparent; border: 1px solid #475569; color: #94a3b8; }
+.btn-outline:hover { border-color: #38bdf8; color: #38bdf8; }
+
+.criteria-bar { background: #1e293b; border-bottom: 1px solid #334155; padding: 16px 32px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.criteria-chip { background: #334155; padding: 6px 14px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.criteria-chip .num { background: #2563eb; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+
+.stats-bar { padding: 16px 32px; display: flex; gap: 16px; }
+.stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px 20px; flex: 1; }
+.stat-card .label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+.stat-card .value.blue { color: #38bdf8; }
+.stat-card .value.green { color: #34d399; }
+.stat-card .value.amber { color: #fbbf24; }
+.stat-card .value.red { color: #f87171; }
+
+.filters { padding: 12px 32px; display: flex; gap: 10px; align-items: center; }
+.filter-btn { padding: 6px 14px; border-radius: 6px; background: #1e293b; border: 1px solid #334155; color: #94a3b8; cursor: pointer; font-size: 12px; }
+.filter-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
+
+.table-wrap { padding: 0 32px 32px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { background: #1e293b; padding: 10px 12px; text-align: left; font-weight: 600; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; border-bottom: 2px solid #334155; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid #1e293b; transition: background 0.15s; }
+tbody tr:hover { background: #1e293b; }
+tbody td { padding: 10px 12px; vertical-align: middle; }
+.company-name { font-weight: 600; color: #f1f5f9; }
+.company-url { font-size: 11px; color: #64748b; }
+.company-url a { color: #38bdf8; text-decoration: none; }
+
+.score-cell { text-align: center; }
+.score-badge { display: inline-block; width: 28px; height: 28px; border-radius: 6px; line-height: 28px; text-align: center; font-weight: 700; font-size: 12px; }
+.score-1 { background: #7f1d1d; color: #fca5a5; }
+.score-2 { background: #78350f; color: #fcd34d; }
+.score-3 { background: #713f12; color: #fde68a; }
+.score-4 { background: #14532d; color: #86efac; }
+.score-5 { background: #064e3b; color: #6ee7b7; }
+
+.total-score { font-weight: 700; font-size: 16px; text-align: center; }
+.total-high { color: #34d399; }
+.total-mid { color: #fbbf24; }
+.total-low { color: #f87171; }
+
+.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.status-none { background: #374151; color: #9ca3af; }
+.status-contacted { background: #1e3a5f; color: #60a5fa; }
+.status-booked { background: #064e3b; color: #34d399; }
+.status-done { background: #312e81; color: #a5b4fc; }
+.status-rejected { background: #7f1d1d; color: #fca5a5; }
+
+.editable { cursor: pointer; border-bottom: 1px dashed #475569; padding: 2px 4px; border-radius: 3px; min-width: 40px; display: inline-block; }
+.editable:hover { background: #334155; }
+.editable:focus { outline: 2px solid #2563eb; background: #1e293b; }
+
+select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e2e8f0; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+
+.decision-go { color: #34d399; font-weight: 700; }
+.decision-nogo { color: #f87171; font-weight: 700; }
+.decision-pending { color: #94a3b8; }
+
+.notes-cell { max-width: 200px; }
+.notes-cell .editable { font-size: 11px; color: #94a3b8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 600px; max-width: 90vw; max-height: 80vh; overflow-y: auto; }
+.modal h2 { font-size: 18px; margin-bottom: 20px; }
+.modal label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
+.modal input, .modal textarea, .modal select { width: 100%; background: #0f172a; border: 1px solid #475569; color: #e2e8f0; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+.modal textarea { min-height: 80px; resize: vertical; }
+.modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; }
+
+.score-input-group { display: flex; gap: 8px; margin-top: 12px; }
+.score-input-item { flex: 1; text-align: center; }
+.score-input-item label { font-size: 10px; }
+.score-input-item select { text-align: center; }
+
+.meeting-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #334155; }
+.meeting-section h3 { font-size: 14px; color: #38bdf8; margin-bottom: 8px; }
+
+.row-actions { display: flex; gap: 4px; }
+.row-btn { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; color: #64748b; font-size: 14px; }
+.row-btn:hover { background: #334155; color: #e2e8f0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AVG <span>Telehealth Partner Tracker</span></h1>
+  <div class="header-actions">
+    <button class="btn btn-outline" onclick="addCompany()">+ Добавить компанию</button>
+    <button class="btn btn-success" onclick="saveFile()">💾 Сохранить файл</button>
+  </div>
+</div>
+
+<div class="criteria-bar">
+  <span style="font-size:12px;color:#64748b;margin-right:4px;">Критерии (1-5):</span>
+  <div class="criteria-chip"><span class="num">1</span> Поставка врачей</div>
+  <div class="criteria-chip"><span class="num">2</span> 50 штатов</div>
+  <div class="criteria-chip"><span class="num">3</span> White-label + BYO pharmacy</div>
+  <div class="criteria-chip"><span class="num">4</span> TRT/HRT/пептиды/WL</div>
+  <div class="criteria-chip"><span class="num">5</span> Ценовая модель</div>
+  <span style="font-size:11px;color:#475569;margin-left:8px;">Проходной балл: ≥18/25</span>
+</div>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<div class="filters">
+  <span style="font-size:12px;color:#64748b;">Фильтр:</span>
+  <button class="filter-btn active" onclick="setFilter('all')">Все</button>
+  <button class="filter-btn" onclick="setFilter('qualified')">Квалифицированные</button>
+  <button class="filter-btn" onclick="setFilter('booked')">Встреча забукана</button>
+  <button class="filter-btn" onclick="setFilter('done')">Встреча проведена</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Компания</th>
+        <th class="score-cell">Врачи</th>
+        <th class="score-cell">50 шт.</th>
+        <th class="score-cell">WL+Pharm</th>
+        <th class="score-cell">Релев.</th>
+        <th class="score-cell">Цена</th>
+        <th class="score-cell">Итого</th>
+        <th>Статус</th>
+        <th>Встреча / Zoom</th>
+        <th>Цена/визит</th>
+        <th>Запуск</th>
+        <th>Решение</th>
+        <th>Заметки</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2 id="modal-title">Редактировать компанию</h2>
+    <label>Название</label>
+    <input id="m-name" placeholder="Company Name">
+    <label>Сайт</label>
+    <input id="m-url" placeholder="https://...">
+    <label>Контакт (URL/email для букинга)</label>
+    <input id="m-contact" placeholder="https://... или email">
+
+    <div class="score-input-group">
+      <div class="score-input-item"><label>Врачи</label><select id="m-s1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>50 шт.</label><select id="m-s2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>WL+Pharm</label><select id="m-s3"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>Релев.</label><select id="m-s4"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>Цена</label><select id="m-s5"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+    </div>
+
+    <label>Статус</label>
+    <select id="m-status">
+      <option value="none">Не начат</option>
+      <option value="contacted">Форма/Email отправлен</option>
+      <option value="booked">Встреча забукана</option>
+      <option value="done">Встреча проведена</option>
+      <option value="rejected">Не подходит</option>
+    </select>
+
+    <div class="meeting-section">
+      <h3>После встречи</h3>
+      <label>Дата/время встречи</label>
+      <input id="m-meeting-date" placeholder="Feb 27, 10:00 AM ET">
+      <label>Ссылка на Zoom/Meet</label>
+      <input id="m-meeting-link" placeholder="https://zoom.us/j/... или https://meet.google.com/...">
+      <label>Цена за визит / модель</label>
+      <input id="m-price" placeholder="$75/consult, $X/month, rev-share...">
+      <label>Скорость запуска</label>
+      <input id="m-launch" placeholder="2-4 weeks, 30 days, etc.">
+      <label>Решение</label>
+      <select id="m-decision">
+        <option value="pending">Ожидание</option>
+        <option value="go">GO ✓</option>
+        <option value="nogo">NO-GO ✗</option>
+      </select>
+      <label>Заметки</label>
+      <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="saveModal()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== DATA (this is the persistent storage — lives inside the HTML) ==========
+var DATA = [
+  // ===== ЗАБУКАННЫЕ ВСТРЕЧИ (по дате) =====
+  {
+    id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
+    scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
+    status: "booked", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "", launch: "", decision: "pending",
+    meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
+    notes: "Встреча СЕГОДНЯ чт 26 фев 1:30-2:00 PM ET с Shafi Ahamed. Zoom. Поставляют врачей через WebDoctors — board-certified, все 50 штатов. White-label + pharmacy integration. Уточнить: TRT/controlled substances, BYO pharmacy, pricing."
+  },
+  {
+    id: 8, name: "Qualiphy", url: "https://qualiphy.me", contact: "",
+    scores: {s1:2, s2:4, s3:2, s4:3, s5:2},
+    status: "booked", meetingDate: "Feb 27, 10:00 AM ET (пт)", price: "$27.99/визит", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Встреча пт 27 фев 10:00-10:30 AM ET. 'Qualiphy GFE & Rx Fulfillment Solution' с Lorena Santiago. Google Meet — ссылка в приглашении. Pay-per-consult маркетплейс ($27.99/визит). Уточнить модель."
+  },
+  {
+    id: 13, name: "Bask Health", url: "https://bask.health", contact: "https://bask.health/",
+    scores: {s1:3, s2:3, s3:4, s4:3, s5:3},
+    status: "booked", meetingDate: "Feb 27, 11:30 AM ET (пт)", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Intro & Demo пт 27 фев 11:30 с Susanna Lewis (Google Meet — ссылка в приглашении на info@advancedvitalitygroup.com). Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
+  },
+  {
+    id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "https://whitelblrx.com/",
+    scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
+    status: "booked", meetingDate: "Feb 27, 1:30 PM ET (пт)", price: "", launch: "", decision: "pending",
+    meetingLink: "https://us06web.zoom.us/j/84051750039?pwd=aJBtBjiZ9cMfXfzxDLOw4bajCZ880s.1",
+    notes: "⭐ GREAT FIT 22/25! Пт 27 фев 1:30 PM. Zoom с Richard Köhn (smartdoctors.us), pwd: 216710. Врачи 50 штатов + Puerto Rico. ED, Weight Loss, OTC. Pharmacy integration. White-label, HIPAA. ПРИОРИТЕТ #2!"
+  },
+  {
+    id: 10, name: "Beluga Health", url: "https://belugahealth.com", contact: "https://www.belugahealth.com/",
+    scores: {s1:5, s2:5, s3:4, s4:3, s5:3},
+    status: "booked", meetingDate: "Mar 1, 9:20 AM ET (вс)", price: "", launch: "", decision: "pending",
+    meetingLink: "https://meet.google.com/yng-dbvd-ctw",
+    notes: "⭐ GOOD FIT 20/25. Вс 1 марта 9:20-9:40 AM ET, Google Meet, Discovery Call с Joshua Kishineff (joshua@belugahealth.com). Physician-only network, all 50 states. True white-label, DTC-native. Перенос: https://beluga-health.cal.com/booking/sDSH2apioFB89Nn1TMvoDH"
+  },
+  {
+    id: 6, name: "Ola Digital Health", url: "https://oladigital.health", contact: "https://scheduler.zoom.us/alpeshrph/ola-digital-health-",
+    scores: {s1:4, s2:5, s3:4, s4:4, s5:3},
+    status: "booked", meetingDate: "Mar 2, 2:45 PM ET (пн)", price: "", launch: "", decision: "pending",
+    meetingLink: "https://us02web.zoom.us/j/7572757275?omn=85426982367",
+    notes: "Пн 2 марта 14:45-15:30 ET, Zoom с Alpesh Patel (therxcare@gmail.com). Участники: het, dhwani, sakshi, alpesh @oladigital.health. Сеть врачей во всех 50 штатах."
+  },
+  {
+    id: 15, name: "White Label MD", url: "https://whitelabelmd.com", contact: "https://launch.whitelabelmd.com/",
+    scores: {s1:4, s2:4, s3:4, s4:3, s5:3},
+    status: "booked", meetingDate: "Mar 4, 2:00 PM ET (ср)", price: "", launch: "", decision: "pending",
+    meetingLink: "https://meet.google.com/kkn-ghnv-mqn",
+    notes: "⭐ 18/25. ВСТРЕЧА ЗАБУКАНА ср 4 марта 2:00 PM ET с Justin Champion (justin.champion@whitelabelmd.com). Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ПРИНЯЛ приглашение. 'We can help' — ответил мгновенно. 100+ founders запустились за 6 мес. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label."
+  },
+  // ===== CONTACTED (по баллам — высшие первые) =====
+  {
+    id: 2, name: "OpenLoop Health", url: "https://openloophealth.com", contact: "https://openloophealth.com/contact-sales",
+    scores: {s1:5, s2:5, s3:5, s4:5, s5:3},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "✅ Форма отправлена. ОТВЕТ ПОЛУЧЕН 26 фев: 'someone from our sales team will be in touch very soon'. 20k клиницистов. Все 50 штатов. Weight loss, longevity, sexual health. Full white-label. ЖДЁМ звонок от sales."
+  },
+  {
+    id: 9, name: "MD Integrations", url: "https://mdintegrations.com", contact: "https://mdintegrations.com/faq",
+    scores: {s1:5, s2:5, s3:4, s4:5, s5:4},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "⭐ PERFECT FIT 23/25! ПРИОРИТЕТ #1! ОТВЕТ от Alyssa Foxson (a.fox@mdintegrations.com, Inside Sales). Запросила: описание компании, объёмы, время для звонка. ОТВЕТИЛИ 26 фев с описанием AVG + слоты (вт 3, ср 4, чт 5 марта после 2 PM ET). Её календарь: calendar.app.google/k4wQiF3TBEu7dFBK6. Doctor-founded, 50 states, API-first."
+  },
+  {
+    id: 1, name: "SteadyMD", url: "https://steadymd.com", contact: "https://www.steadymd.com/contact/",
+    scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Форма отправлена (info@advancedvitalitygroup.com). Сотни врачей во всех 50 штатах. Партнёры Amazon Clinic. Нанимают, лицензируют, обучают врачей."
+  },
+  {
+    id: 4, name: "WellSync", url: "https://wellsync.com", contact: "https://wellsync.com/contact/",
+    scores: {s1:4, s2:3, s3:4, s4:5, s5:3},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Форма заполнена, ждёт reCAPTCHA. Telehealth Provider Network. TRT, GLP-1, пептиды в чекбоксах формы. Покрытие штатов уточнить."
+  },
+  {
+    id: 5, name: "MyTelemedicine", url: "https://mytelemedicine.com", contact: "sales@mytelemedicine.com",
+    scores: {s1:4, s2:4, s3:4, s4:4, s5:3},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Email отправлен на sales@mytelemedicine.com. JD Power #1 2024. Nationwide clinician network. White-label, DTC-focused."
+  },
+  {
+    id: 3, name: "Wheel", url: "https://wheel.com", contact: "https://info.wheel.com/l/1037703/2026-01-30/37bh9",
+    scores: {s1:4, s2:5, s3:2, s4:3, s5:2},
+    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "⚠️ MAYBE — форма заполнена, ждёт reCAPTCHA. $216M funding. Не ясно: BYO-pharmacy (2/5), нет явного фокуса TRT/пептиды (3/5), enterprise-pricing не для $137/мес (2/5). Уточнить на звонке."
+  },
+  {
+    id: 16, name: "This American Doc", url: "https://thisamericandoc.com", contact: "https://thisamericandoc.com/companies",
+    scores: {s1:4, s2:4, s3:3, s4:2, s5:3},
+    status: "rejected", meetingDate: "", price: "", launch: "", decision: "nogo",
+    meetingLink: "",
+    notes: "❌ БАУНС — email info@thisamericandoc.com не существует (550 5.1.1 address not found). Email отправлен 26 фев, вернулся. Physician-owned telehealth staffing. 16/25 — был ниже проходного. УБРАТЬ."
+  },
+  // ===== НЕ НАЧАТЫ =====
+  {
+    id: 11, name: "TelehealthCash (Power Secure Medical)", url: "https://telehealthcash.com", contact: "https://telehealthcash.com/",
+    scores: {s1:5, s2:5, s3:3, s4:3, s5:2},
+    status: "none", meetingDate: "", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Полный backend: врачи 50 штатов + pharmacy fulfillment + customer service. 1M+ пациентов, LegitScript cert, основан 1999. Модель: 50% rev share (НЕ per-consult). BYO pharmacy — под вопросом. Общая телемедицина, не спец. TRT/HRT."
+  }
+];
+
+var currentFilter = 'all';
+var editingId = null;
+
+function getTotal(c) { return c.scores.s1 + c.scores.s2 + c.scores.s3 + c.scores.s4 + c.scores.s5; }
+function isQualified(c) { return getTotal(c) >= 18; }
+
+function renderStats() {
+  var total = DATA.length;
+  var qualified = DATA.filter(isQualified).length;
+  var booked = DATA.filter(c => c.status === 'booked' || c.status === 'done').length;
+  var done = DATA.filter(c => c.status === 'done').length;
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat-card"><div class="label">Всего компаний</div><div class="value blue">${total}</div></div>
+    <div class="stat-card"><div class="label">Квалифицированных (≥18)</div><div class="value green">${qualified}</div></div>
+    <div class="stat-card"><div class="label">Встреч забукано</div><div class="value amber">${booked}</div></div>
+    <div class="stat-card"><div class="label">Встреч проведено</div><div class="value red">${done}</div></div>
+  `;
+}
+
+function renderTable() {
+  var filtered = DATA;
+  if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
+  else if (currentFilter === 'booked') filtered = DATA.filter(c => c.status === 'booked');
+  else if (currentFilter === 'done') filtered = DATA.filter(c => c.status === 'done');
+
+  var html = '';
+  filtered.forEach(function(c, i) {
+    var t = getTotal(c);
+    var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
+    var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
+    var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
+    var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'Проведена',rejected:'Не подходит'};
+    var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
+    var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
+    html += `<tr data-id="${c.id}" style="${rowBorder}">
+      <td style="color:#475569">${i+1}</td>
+      <td><div class="company-name">${c.name}${topBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div></td>
+      <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
+      <td class="score-cell"><span class="score-badge score-${c.scores.s2}">${c.scores.s2}</span></td>
+      <td class="score-cell"><span class="score-badge score-${c.scores.s3}">${c.scores.s3}</span></td>
+      <td class="score-cell"><span class="score-badge score-${c.scores.s4}">${c.scores.s4}</span></td>
+      <td class="score-cell"><span class="score-badge score-${c.scores.s5}">${c.scores.s5}</span></td>
+      <td class="total-score ${tClass}">${t}/25</td>
+      <td><span class="status-badge status-${c.status}">${statusLabels[c.status]||c.status}</span></td>
+      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '') : '—'}</td>
+      <td style="font-size:12px">${c.price||'—'}</td>
+      <td style="font-size:12px">${c.launch||'—'}</td>
+      <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
+      <td class="notes-cell"><span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span></td>
+      <td><div class="row-actions">
+        <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
+        <button class="row-btn" onclick="deleteRow(${c.id})" title="Удалить">🗑️</button>
+      </div></td>
+    </tr>`;
+  });
+  document.getElementById('table-body').innerHTML = html;
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable();
+}
+
+function editRow(id) {
+  editingId = id;
+  var c = DATA.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('modal-title').textContent = 'Редактировать: ' + c.name;
+  document.getElementById('m-name').value = c.name;
+  document.getElementById('m-url').value = c.url;
+  document.getElementById('m-contact').value = c.contact || '';
+  document.getElementById('m-s1').value = c.scores.s1;
+  document.getElementById('m-s2').value = c.scores.s2;
+  document.getElementById('m-s3').value = c.scores.s3;
+  document.getElementById('m-s4').value = c.scores.s4;
+  document.getElementById('m-s5').value = c.scores.s5;
+  document.getElementById('m-status').value = c.status;
+  document.getElementById('m-meeting-date').value = c.meetingDate || '';
+  document.getElementById('m-meeting-link').value = c.meetingLink || '';
+  document.getElementById('m-price').value = c.price || '';
+  document.getElementById('m-launch').value = c.launch || '';
+  document.getElementById('m-decision').value = c.decision || 'pending';
+  document.getElementById('m-notes').value = c.notes || '';
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+function addCompany() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Добавить компанию';
+  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes'].forEach(id => document.getElementById(id).value = '');
+  ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
+  document.getElementById('m-status').value = 'none';
+  document.getElementById('m-decision').value = 'pending';
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('edit-modal').classList.remove('show'); }
+
+function saveModal() {
+  var obj = {
+    name: document.getElementById('m-name').value,
+    url: document.getElementById('m-url').value,
+    contact: document.getElementById('m-contact').value,
+    scores: {
+      s1: parseInt(document.getElementById('m-s1').value),
+      s2: parseInt(document.getElementById('m-s2').value),
+      s3: parseInt(document.getElementById('m-s3').value),
+      s4: parseInt(document.getElementById('m-s4').value),
+      s5: parseInt(document.getElementById('m-s5').value)
+    },
+    status: document.getElementById('m-status').value,
+    meetingDate: document.getElementById('m-meeting-date').value,
+    meetingLink: document.getElementById('m-meeting-link').value,
+    price: document.getElementById('m-price').value,
+    launch: document.getElementById('m-launch').value,
+    decision: document.getElementById('m-decision').value,
+    notes: document.getElementById('m-notes').value
+  };
+  if (editingId) {
+    var idx = DATA.findIndex(x => x.id === editingId);
+    if (idx >= 0) { obj.id = editingId; DATA[idx] = obj; }
+  } else {
+    obj.id = Math.max(0, ...DATA.map(x => x.id)) + 1;
+    DATA.push(obj);
+  }
+  closeModal();
+  renderAll();
+}
+
+function deleteRow(id) {
+  if (!confirm('Удалить эту компанию?')) return;
+  DATA = DATA.filter(x => x.id !== id);
+  renderAll();
+}
+
+function renderAll() { renderStats(); renderTable(); }
+
+function saveFile() {
+  var html = document.documentElement.outerHTML;
+  // Update DATA in the saved version
+  var dataStr = 'var DATA = ' + JSON.stringify(DATA, null, 2) + ';';
+  html = html.replace(/var DATA = \[[\s\S]*?\];/, dataStr);
+  var blob = new Blob(['<!DOCTYPE html>\n<html lang="ru">\n' + html.split('<html lang="ru">')[1]], {type: 'text/html'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'AVG_Telehealth_Tracker.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  alert('Файл сохранён! Замени старый файл новым скачанным.');
+}
+
+// Close modal on outside click
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+renderAll();
+</script>
+</body>
+</html>
