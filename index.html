@@ -99,6 +99,22 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 .row-actions { display: flex; gap: 4px; }
 .row-btn { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; color: #64748b; font-size: 14px; }
 .row-btn:hover { background: #334155; color: #e2e8f0; }
+
+.meeting-done-badge { display: inline-flex; align-items: center; gap: 4px; background: #312e81; color: #a5b4fc; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+.meeting-done-badge .check { color: #34d399; font-size: 14px; }
+
+.summary-toggle { cursor: pointer; color: #38bdf8; font-size: 11px; text-decoration: underline; margin-top: 4px; display: inline-block; }
+.summary-toggle:hover { color: #7dd3fc; }
+
+.summary-panel { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 11px; color: #cbd5e1; line-height: 1.5; max-height: 300px; overflow-y: auto; }
+.summary-panel.show { display: block; }
+.summary-panel h4 { color: #38bdf8; font-size: 12px; margin: 8px 0 4px; }
+.summary-panel h4:first-child { margin-top: 0; }
+.summary-panel ul { margin: 4px 0 4px 16px; }
+.summary-panel .verdict { padding: 8px; border-radius: 6px; margin-top: 8px; font-weight: 600; }
+.summary-panel .verdict-positive { background: #064e3b; color: #34d399; border: 1px solid #059669; }
+.summary-panel .verdict-neutral { background: #78350f; color: #fcd34d; border: 1px solid #d97706; }
+.summary-panel .verdict-negative { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
 </style>
 </head>
 <body>
@@ -218,9 +234,17 @@ var DATA = [
   {
     id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
     scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
-    status: "booked", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "", launch: "", decision: "pending",
+    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $5/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
     meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
-    notes: "Встреча СЕГОДНЯ чт 26 фев 1:30-2:00 PM ET с Shafi Ahamed. Zoom. Поставляют врачей через WebDoctors — board-certified, все 50 штатов. White-label + pharmacy integration. Уточнить: TRT/controlled substances, BYO pharmacy, pricing."
+    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $5/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
+    meetingSummary: {
+      verdict: "positive",
+      verdictText: "Хороший кандидат — покрывает все 50 штатов, turnkey решение, разумная цена. Нужно уточнить слоты и пептиды.",
+      pricing: "$5000 setup + $500/мес tech + $1000/мес минимум (20 консультов) + $5/консульт далее",
+      nextSteps: "Получить proposal, назначить follow-up звонок с Shafi (+1 6302306699)",
+      keyContacts: "Shafi Ahamed: +917708614041 / US: +1 6302306699",
+      partners: "WebDoctors (webdoctors.com), Belmar Pharma (belmarpharmasolutions.com)"
+    }
   },
   {
     id: 8, name: "Qualiphy", url: "https://qualiphy.me", contact: "",
@@ -233,8 +257,8 @@ var DATA = [
     id: 13, name: "Bask Health", url: "https://bask.health", contact: "https://bask.health/",
     scores: {s1:3, s2:3, s3:4, s4:3, s5:3},
     status: "booked", meetingDate: "Feb 27, 11:30 AM ET (пт)", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "Intro & Demo пт 27 фев 11:30 с Susanna Lewis (Google Meet — ссылка в приглашении на info@advancedvitalitygroup.com). Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
+    meetingLink: "https://meet.google.com/ohw-zxmi-sqa",
+    notes: "Intro & Demo пт 27 фев 11:30 AM с Susanna Lewis. Google Meet: meet.google.com/ohw-zxmi-sqa. Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
   },
   {
     id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "https://whitelblrx.com/",
@@ -277,14 +301,14 @@ var DATA = [
     scores: {s1:5, s2:5, s3:4, s4:5, s5:4},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "⭐ PERFECT FIT 23/25! ПРИОРИТЕТ #1! ОТВЕТ от Alyssa Foxson (a.fox@mdintegrations.com, Inside Sales). Запросила: описание компании, объёмы, время для звонка. ОТВЕТИЛИ 26 фев с описанием AVG + слоты (вт 3, ср 4, чт 5 марта после 2 PM ET). Её календарь: calendar.app.google/k4wQiF3TBEu7dFBK6. Doctor-founded, 50 states, API-first."
+    notes: "⭐ PERFECT FIT 23/25! ПРИОРИТЕТ #1! ОТВЕТ от Alyssa Foxson (a.fox@mdintegrations.com, Inside Sales). Запросила: описание компании, объёмы, время для звонка. ОТВЕТИЛИ 26 фев с описанием AVG + слоты. Её календарь: calendar.app.google/k4wQiF3TBEu7dFBK6. 2-й ответ 26 фев — просит подробности перед звонком. Doctor-founded, 50 states, API-first."
   },
   {
     id: 1, name: "SteadyMD", url: "https://steadymd.com", contact: "https://www.steadymd.com/contact/",
     scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "Форма отправлена (info@advancedvitalitygroup.com). Сотни врачей во всех 50 штатах. Партнёры Amazon Clinic. Нанимают, лицензируют, обучают врачей."
+    notes: "⭐ ОТВЕТ от Lindsey Anderson (VP Enterprise Sales, lindsey@steadymd.com) 26 фев. Просит детали: какие мед. направления, масштаб, текущие/новые пациенты. НУЖНО ОТВЕТИТЬ с описанием TRT/HRT программы. Сотни врачей во всех 50 штатах. Партнёры Amazon Clinic."
   },
   {
     id: 4, name: "WellSync", url: "https://wellsync.com", contact: "https://wellsync.com/contact/",
@@ -318,9 +342,9 @@ var DATA = [
   {
     id: 11, name: "TelehealthCash (Power Secure Medical)", url: "https://telehealthcash.com", contact: "https://telehealthcash.com/",
     scores: {s1:5, s2:5, s3:3, s4:3, s5:2},
-    status: "none", meetingDate: "", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 3, 1:30 PM ET (вт)", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "Полный backend: врачи 50 штатов + pharmacy fulfillment + customer service. 1M+ пациентов, LegitScript cert, основан 1999. Модель: 50% rev share (НЕ per-consult). BYO pharmacy — под вопросом. Общая телемедицина, не спец. TRT/HRT."
+    notes: "⭐ ВСТРЕЧА ЗАБУКАНА вт 3 марта 1:30 PM ET с Matthew Hoh (gosecuremedical@gmail.com, тел: +1 954-758-0747). Через Calendly. Полный backend: врачи 50 штатов + pharmacy fulfillment + customer service. 1M+ пациентов, LegitScript cert, основан 1999. Модель: 50% rev share (НЕ per-consult). BYO pharmacy — под вопросом."
   }
 ];
 
@@ -355,7 +379,7 @@ function renderTable() {
     var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
     var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
     var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
-    var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'Проведена',rejected:'Не подходит'};
+    var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'✅ Проведена',rejected:'Не подходит'};
     var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
     var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
     html += `<tr data-id="${c.id}" style="${rowBorder}">
@@ -372,7 +396,10 @@ function renderTable() {
       <td style="font-size:12px">${c.price||'—'}</td>
       <td style="font-size:12px">${c.launch||'—'}</td>
       <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
-      <td class="notes-cell"><span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span></td>
+      <td class="notes-cell">
+        <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
+        ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
+      </td>
       <td><div class="row-actions">
         <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
         <button class="row-btn" onclick="deleteRow(${c.id})" title="Удалить">🗑️</button>
@@ -459,6 +486,11 @@ function deleteRow(id) {
   if (!confirm('Удалить эту компанию?')) return;
   DATA = DATA.filter(x => x.id !== id);
   renderAll();
+}
+
+function toggleSummary(id) {
+  var panel = document.getElementById('summary-' + id);
+  if (panel) panel.classList.toggle('show');
 }
 
 function renderAll() { renderStats(); renderTable(); }
