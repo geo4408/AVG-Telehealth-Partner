@@ -474,11 +474,61 @@ function renderStats() {
   `;
 }
 
+function parseMeetingDate(str) {
+  if (!str) return null;
+  // Format: "Feb 27, 1:30 PM ET (пт)" or "Mar 2, 3:30 PM ET (пн)"
+  var m = str.match(/^(\w+)\s+(\d+),?\s+(\d+):(\d+)\s+(AM|PM)/i);
+  if (!m) return null;
+  var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  var mon = months[m[1]];
+  if (mon === undefined) return null;
+  var day = parseInt(m[2]);
+  var hour = parseInt(m[3]);
+  var min = parseInt(m[4]);
+  if (m[5] === 'PM' && hour < 12) hour += 12;
+  if (m[5] === 'AM' && hour === 12) hour = 0;
+  var year = new Date().getFullYear();
+  var d = new Date(year, mon, day, hour, min);
+  // If date is far in the past (>6 months), assume next year
+  if (d < new Date() - 180*86400000) d.setFullYear(year + 1);
+  return d;
+}
+
+function smartSort(arr) {
+  var now = new Date();
+  return arr.slice().sort(function(a, b) {
+    var dA = parseMeetingDate(a.meetingDate);
+    var dB = parseMeetingDate(b.meetingDate);
+    var hasA = dA !== null;
+    var hasB = dB !== null;
+    // Companies with meetings first, no meetings last
+    if (hasA && !hasB) return -1;
+    if (!hasA && hasB) return 1;
+    if (!hasA && !hasB) {
+      // Both no meetings: NO-GO at bottom, then by total score desc
+      if (a.decision === 'nogo' && b.decision !== 'nogo') return 1;
+      if (a.decision !== 'nogo' && b.decision === 'nogo') return -1;
+      return getTotal(b) - getTotal(a);
+    }
+    // Both have meetings
+    var futA = dA >= now;
+    var futB = dB >= now;
+    // Future meetings first (closest on top)
+    if (futA && futB) return dA - dB;
+    if (futA && !futB) return -1;
+    if (!futA && futB) return 1;
+    // Both past: most recent first
+    return dB - dA;
+  });
+}
+
 function renderTable() {
   var filtered = DATA;
   if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
   else if (currentFilter === 'booked') filtered = DATA.filter(c => c.status === 'booked');
   else if (currentFilter === 'done') filtered = DATA.filter(c => c.status === 'done');
+
+  filtered = smartSort(filtered);
 
   var html = '';
   filtered.forEach(function(c, i) {
@@ -486,10 +536,21 @@ function renderTable() {
     var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
     var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
     var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
+    // Highlight upcoming meetings
+    var meetDate = parseMeetingDate(c.meetingDate);
+    var now = new Date();
+    var urgentStyle = '';
+    var meetBadge = '';
+    if (meetDate) {
+      var diffH = (meetDate - now) / 3600000;
+      if (diffH > 0 && diffH <= 24) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СЕГОДНЯ</span>'; }
+      else if (diffH > 24 && diffH <= 48) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ЗАВТРА</span>'; }
+      else if (diffH > 0 && diffH <= 168) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СКОРО</span>'; }
+    }
     var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'✅ Проведена',rejected:'Не подходит'};
     var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
     var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
-    html += `<tr data-id="${c.id}" style="${rowBorder}">
+    html += `<tr data-id="${c.id}" style="${rowBorder}${urgentStyle}">
       <td style="color:#475569">${i+1}</td>
       <td><div class="company-name">${c.name}${topBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
@@ -499,7 +560,7 @@ function renderTable() {
       <td class="score-cell"><span class="score-badge score-${c.scores.s5}">${c.scores.s5}</span></td>
       <td class="total-score ${tClass}">${t}/25</td>
       <td><span class="status-badge status-${c.status}">${statusLabels[c.status]||c.status}</span></td>
-      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '') : '—'}</td>
+      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '') : '—'}</td>
       <td style="font-size:12px">${c.price||'—'}</td>
       <td style="font-size:12px">${c.launch||'—'}</td>
       <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
