@@ -128,6 +128,19 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 .task-deadline.normal { color: #94a3b8; }
 .task-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 @keyframes pulse-red { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+.contacts-toggle { cursor: pointer; color: #38bdf8; font-size: 11px; text-decoration: underline; margin-top: 4px; display: inline-block; }
+.contacts-toggle:hover { color: #7dd3fc; }
+
+.contacts-panel { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 11px; color: #cbd5e1; line-height: 1.5; max-height: 300px; overflow-y: auto; }
+.contacts-panel.show { display: block; }
+
+.pros-cons { margin-top: 8px; }
+.pro-item { color: #34d399; font-size: 11px; margin: 2px 0; }
+.con-item { color: #f87171; font-size: 11px; margin: 2px 0; }
+
+.checklist-item { font-size: 11px; margin: 2px 0; cursor: pointer; }
+.checklist-panel { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -246,6 +259,32 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
       <label style="display:inline-flex;align-items:center;gap:8px;margin-top:8px">
         <input type="checkbox" id="m-task-done" style="width:auto"> Задача выполнена
       </label>
+    </div>
+
+    <div class="meeting-section">
+      <h3>👥 Контакты</h3>
+      <label>Контактное лицо</label>
+      <input id="m-contact-name" placeholder="Имя контактного лица">
+      <label>Email</label>
+      <input id="m-contact-email" placeholder="email@company.com">
+      <label>Телефон / WhatsApp</label>
+      <input id="m-contact-phone" placeholder="+1 234 567 8900">
+      <label>Должность</label>
+      <input id="m-contact-role" placeholder="CEO, Account Manager, etc.">
+    </div>
+
+    <div class="meeting-section">
+      <h3>💪 Сильные / Слабые стороны</h3>
+      <label>Сильные стороны (через ;)</label>
+      <textarea id="m-pros" placeholder="50 штатов; Быстрый запуск; Хорошие цены"></textarea>
+      <label>Слабые стороны (через ;)</label>
+      <textarea id="m-pros-cons" placeholder="Нет TRT; Долгий онбординг"></textarea>
+    </div>
+
+    <div class="meeting-section">
+      <h3>❓ Чеклист вопросов</h3>
+      <label>Вопросы (через ; — можно добавить [x] для отмеченных)</label>
+      <textarea id="m-checklist" placeholder="Blood tests?; Можем ли видеть прескрипшны?; [x] Уже уточнили цены"></textarea>
     </div>
 
     <div class="modal-actions">
@@ -613,6 +652,50 @@ async function toggleTask(id) {
   await saveToFirestore(c);
 }
 
+function renderContactsPanel(c) {
+  var html = '';
+  if (c.contactName || c.contactEmail || c.contactPhone) {
+    html += '<div style="margin-bottom:6px"><strong>👤 ' + (c.contactName||'—') + '</strong>';
+    if (c.contactRole) html += ' <span style="color:#64748b;font-size:10px">(' + c.contactRole + ')</span>';
+    html += '</div>';
+    if (c.contactEmail) html += '<div style="font-size:11px">📧 <a href="mailto:'+c.contactEmail+'" style="color:#38bdf8">'+c.contactEmail+'</a></div>';
+    if (c.contactPhone) html += '<div style="font-size:11px">📱 '+c.contactPhone+'</div>';
+  }
+  if (c.pros && c.pros.length) {
+    html += '<h4 style="color:#34d399;margin-top:8px">💪 Сильные стороны</h4><ul style="margin:4px 0 4px 16px">';
+    c.pros.forEach(function(p){ html += '<li style="color:#34d399;font-size:11px">'+p+'</li>'; });
+    html += '</ul>';
+  }
+  if (c.cons && c.cons.length) {
+    html += '<h4 style="color:#f87171;margin-top:8px">⚠️ Слабые стороны</h4><ul style="margin:4px 0 4px 16px">';
+    c.cons.forEach(function(p){ html += '<li style="color:#f87171;font-size:11px">'+p+'</li>'; });
+    html += '</ul>';
+  }
+  if (c.checklist && c.checklist.length) {
+    html += '<h4 style="color:#fbbf24;margin-top:8px">❓ Чеклист</h4>';
+    c.checklist.forEach(function(q, qi){
+      html += '<div style="font-size:11px;margin:2px 0;cursor:pointer" onclick="toggleChecklist('+c.id+','+qi+')">';
+      html += q.done ? '☑️ <span style="text-decoration:line-through;color:#64748b">'+q.text+'</span>' : '⬜ '+q.text;
+      html += '</div>';
+    });
+  }
+  return html;
+}
+
+async function toggleChecklist(companyId, qIdx) {
+  event.stopPropagation();
+  var c = DATA.find(x => x.id === companyId);
+  if (!c || !c.checklist || !c.checklist[qIdx]) return;
+  c.checklist[qIdx].done = !c.checklist[qIdx].done;
+  renderAll();
+  await saveToFirestore(c);
+}
+
+function toggleContacts(id) {
+  var panel = document.getElementById('contacts-' + id);
+  if (panel) panel.classList.toggle('show');
+}
+
 function renderTable() {
   var filtered = DATA;
   if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
@@ -652,7 +735,7 @@ function renderTable() {
       <td class="score-cell"><span class="score-badge score-${c.scores.s5}">${c.scores.s5}</span></td>
       <td class="total-score ${tClass}">${t}/25</td>
       <td><span class="status-badge status-${c.status}">${statusLabels[c.status]||c.status}</span></td>
-      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '') : '—'}</td>
+      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.status === 'done' || c.status === 'rejected' ? '' : (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '<br><span style="color:#475569;font-size:10px;cursor:pointer" onclick="editRow('+c.id+')">+ добавить ссылку</span>')) : '—'}</td>
       <td style="font-size:12px">${c.price||'—'}</td>
       <td style="font-size:12px">${c.launch||'—'}</td>
       <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
@@ -660,6 +743,7 @@ function renderTable() {
       <td class="notes-cell">
         <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
         ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
+        ${(c.contactName || (c.pros && c.pros.length) || (c.checklist && c.checklist.length)) ? '<span class="summary-toggle" onclick="toggleContacts('+c.id+')">👥 Контакты/Инфо</span><div class="summary-panel" id="contacts-'+c.id+'">'+renderContactsPanel(c)+'</div>' : ''}
       </td>
       <td><div class="row-actions">
         <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
@@ -701,13 +785,20 @@ function editRow(id) {
   document.getElementById('m-task-deadline').value = c.taskDeadline || '';
   document.getElementById('m-task-responsible').value = c.taskResponsible || '';
   document.getElementById('m-task-done').checked = c.taskDone || false;
+  document.getElementById('m-contact-name').value = c.contactName || '';
+  document.getElementById('m-contact-email').value = c.contactEmail || '';
+  document.getElementById('m-contact-phone').value = c.contactPhone || '';
+  document.getElementById('m-contact-role').value = c.contactRole || '';
+  document.getElementById('m-pros').value = (c.pros || []).join('; ');
+  document.getElementById('m-pros-cons').value = (c.cons || []).join('; ');
+  document.getElementById('m-checklist').value = (c.checklist || []).map(q => (q.done ? '[x] ' : '') + q.text).join('; ');
   document.getElementById('edit-modal').classList.add('show');
 }
 
 function addCompany() {
   editingId = null;
   document.getElementById('modal-title').textContent = 'Добавить компанию';
-  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes','m-next-task','m-task-deadline','m-task-responsible'].forEach(id => document.getElementById(id).value = '');
+  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes','m-next-task','m-task-deadline','m-task-responsible','m-contact-name','m-contact-email','m-contact-phone','m-contact-role','m-pros','m-pros-cons','m-checklist'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('m-task-done').checked = false;
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
@@ -739,7 +830,14 @@ async function saveModal() {
     nextTask: document.getElementById('m-next-task').value,
     taskDeadline: document.getElementById('m-task-deadline').value,
     taskResponsible: document.getElementById('m-task-responsible').value,
-    taskDone: document.getElementById('m-task-done').checked
+    taskDone: document.getElementById('m-task-done').checked,
+    contactName: document.getElementById('m-contact-name').value,
+    contactEmail: document.getElementById('m-contact-email').value,
+    contactPhone: document.getElementById('m-contact-phone').value,
+    contactRole: document.getElementById('m-contact-role').value,
+    pros: document.getElementById('m-pros').value.split(';').map(s=>s.trim()).filter(Boolean),
+    cons: document.getElementById('m-pros-cons').value.split(';').map(s=>s.trim()).filter(Boolean),
+    checklist: document.getElementById('m-checklist').value.split(';').map(s => { s = s.trim(); var done = s.startsWith('[x]'); return {text: s.replace(/^\[x\]\s*/, ''), done: done}; }).filter(q => q.text)
   };
   if (editingId) {
     var idx = DATA.findIndex(x => x.id === editingId);
