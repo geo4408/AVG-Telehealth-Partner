@@ -115,6 +115,19 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 .summary-panel .verdict-positive { background: #064e3b; color: #34d399; border: 1px solid #059669; }
 .summary-panel .verdict-neutral { background: #78350f; color: #fcd34d; border: 1px solid #d97706; }
 .summary-panel .verdict-negative { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
+
+.task-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; line-height: 1.3; max-width: 220px; }
+.task-active { background: rgba(251,191,36,0.12); border: 1px solid #f59e0b; color: #fbbf24; }
+.task-overdue { background: rgba(239,68,68,0.12); border: 1px solid #ef4444; color: #f87171; animation: pulse-red 2s infinite; }
+.task-done { background: rgba(52,211,153,0.08); border: 1px solid #334155; color: #64748b; text-decoration: line-through; }
+.task-none { color: #475569; font-size: 11px; }
+.task-responsible { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+.task-deadline { font-size: 10px; font-weight: 700; }
+.task-deadline.urgent { color: #f87171; }
+.task-deadline.soon { color: #fbbf24; }
+.task-deadline.normal { color: #94a3b8; }
+.task-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+@keyframes pulse-red { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
 </style>
 </head>
 <body>
@@ -145,6 +158,7 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
   <button class="filter-btn" onclick="setFilter('qualified')">Квалифицированные</button>
   <button class="filter-btn" onclick="setFilter('booked')">Встреча забукана</button>
   <button class="filter-btn" onclick="setFilter('done')">Встреча проведена</button>
+  <button class="filter-btn" onclick="setFilter('tasks')">🔥 Активные задачи</button>
 </div>
 
 <div class="table-wrap">
@@ -164,6 +178,7 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
         <th>Цена/визит</th>
         <th>Запуск</th>
         <th>Решение</th>
+        <th>Задача / Next Step</th>
         <th>Заметки</th>
         <th></th>
       </tr>
@@ -218,6 +233,19 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
       </select>
       <label>Заметки</label>
       <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
+    </div>
+
+    <div class="meeting-section">
+      <h3>📋 Задача / Next Step</h3>
+      <label>Что нужно сделать</label>
+      <input id="m-next-task" placeholder="Получить proposal, назначить follow-up, подписать контракт...">
+      <label>Дедлайн</label>
+      <input id="m-task-deadline" placeholder="Mar 5 или 2025-03-05">
+      <label>Ответственный</label>
+      <input id="m-task-responsible" placeholder="Имя ответственного (напр. Alina Rakhimzhanova)">
+      <label style="display:inline-flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="m-task-done" style="width:auto"> Задача выполнена
+      </label>
     </div>
 
     <div class="modal-actions">
@@ -466,11 +494,16 @@ function renderStats() {
   var qualified = DATA.filter(isQualified).length;
   var booked = DATA.filter(c => c.status === 'booked' || c.status === 'done').length;
   var done = DATA.filter(c => c.status === 'done').length;
+  var activeTasks = DATA.filter(c => c.nextTask && !c.taskDone).length;
+  var overdueTasks = DATA.filter(c => { if (!c.nextTask || c.taskDone) return false; var d = parseTaskDeadline(c.taskDeadline); var now = new Date(); now.setHours(0,0,0,0); return d && d < now; }).length;
+  var taskColor = overdueTasks > 0 ? 'red' : activeTasks > 0 ? 'amber' : 'green';
+  var taskLabel = overdueTasks > 0 ? activeTasks + ' (⚠️' + overdueTasks + ' просрочено)' : activeTasks;
   document.getElementById('stats-bar').innerHTML = `
     <div class="stat-card"><div class="label">Всего компаний</div><div class="value blue">${total}</div></div>
     <div class="stat-card"><div class="label">Квалифицированных (≥18)</div><div class="value green">${qualified}</div></div>
     <div class="stat-card"><div class="label">Встреч забукано</div><div class="value amber">${booked}</div></div>
     <div class="stat-card"><div class="label">Встреч проведено</div><div class="value red">${done}</div></div>
+    <div class="stat-card"><div class="label">🔥 Активных задач</div><div class="value ${taskColor}">${taskLabel}</div></div>
   `;
 }
 
@@ -522,11 +555,70 @@ function smartSort(arr) {
   });
 }
 
+function parseTaskDeadline(str) {
+  if (!str) return null;
+  // Supports: "2025-03-05", "Mar 5", "Mar 5, 2025"
+  var d = new Date(str);
+  if (!isNaN(d)) return d;
+  var m = str.match(/^(\w+)\s+(\d+)/);
+  if (m) {
+    var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    var mon = months[m[1]];
+    if (mon !== undefined) {
+      d = new Date(new Date().getFullYear(), mon, parseInt(m[2]));
+      if (d < new Date() - 180*86400000) d.setFullYear(d.getFullYear()+1);
+      return d;
+    }
+  }
+  return null;
+}
+
+function renderTaskCell(c) {
+  if (!c.nextTask) return '<span class="task-none">—</span>';
+  var taskDone = c.taskDone === true;
+  var deadline = parseTaskDeadline(c.taskDeadline);
+  var now = new Date();
+  now.setHours(0,0,0,0);
+  var isOverdue = deadline && !taskDone && deadline < now;
+  var diffDays = deadline ? Math.ceil((deadline - now) / 86400000) : null;
+  var badgeClass = taskDone ? 'task-done' : isOverdue ? 'task-overdue' : 'task-active';
+  var deadlineClass = 'normal';
+  var deadlineLabel = '';
+  if (deadline) {
+    if (taskDone) { deadlineClass = 'normal'; deadlineLabel = c.taskDeadline; }
+    else if (isOverdue) { deadlineClass = 'urgent'; deadlineLabel = '⚠️ Просрочено! ' + c.taskDeadline; }
+    else if (diffDays === 0) { deadlineClass = 'urgent'; deadlineLabel = '🔴 Сегодня!'; }
+    else if (diffDays === 1) { deadlineClass = 'soon'; deadlineLabel = '🟡 Завтра'; }
+    else if (diffDays <= 3) { deadlineClass = 'soon'; deadlineLabel = '📅 ' + c.taskDeadline; }
+    else { deadlineClass = 'normal'; deadlineLabel = '📅 ' + c.taskDeadline; }
+  }
+  var checkbox = taskDone
+    ? '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отменить выполнение">☑️</span>'
+    : '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отметить выполненной">⬜</span>';
+  return '<div class="task-badge '+badgeClass+'" style="cursor:pointer" onclick="editRow('+c.id+')">'
+    + checkbox
+    + '<div>'
+    + '<span class="task-text" title="'+c.nextTask.replace(/"/g,'&quot;')+'">'+c.nextTask+'</span>'
+    + (deadlineLabel ? '<div class="task-deadline '+deadlineClass+'">'+deadlineLabel+'</div>' : '')
+    + (c.taskResponsible ? '<div class="task-responsible">👤 '+c.taskResponsible+'</div>' : '')
+    + '</div></div>';
+}
+
+async function toggleTask(id) {
+  event.stopPropagation();
+  var c = DATA.find(x => x.id === id);
+  if (!c) return;
+  c.taskDone = !c.taskDone;
+  renderAll();
+  await saveToFirestore(c);
+}
+
 function renderTable() {
   var filtered = DATA;
   if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
   else if (currentFilter === 'booked') filtered = DATA.filter(c => c.status === 'booked');
   else if (currentFilter === 'done') filtered = DATA.filter(c => c.status === 'done');
+  else if (currentFilter === 'tasks') filtered = DATA.filter(c => c.nextTask && !c.taskDone);
 
   filtered = smartSort(filtered);
 
@@ -564,6 +656,7 @@ function renderTable() {
       <td style="font-size:12px">${c.price||'—'}</td>
       <td style="font-size:12px">${c.launch||'—'}</td>
       <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
+      <td>${renderTaskCell(c)}</td>
       <td class="notes-cell">
         <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
         ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
@@ -604,13 +697,18 @@ function editRow(id) {
   document.getElementById('m-launch').value = c.launch || '';
   document.getElementById('m-decision').value = c.decision || 'pending';
   document.getElementById('m-notes').value = c.notes || '';
+  document.getElementById('m-next-task').value = c.nextTask || '';
+  document.getElementById('m-task-deadline').value = c.taskDeadline || '';
+  document.getElementById('m-task-responsible').value = c.taskResponsible || '';
+  document.getElementById('m-task-done').checked = c.taskDone || false;
   document.getElementById('edit-modal').classList.add('show');
 }
 
 function addCompany() {
   editingId = null;
   document.getElementById('modal-title').textContent = 'Добавить компанию';
-  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes'].forEach(id => document.getElementById(id).value = '');
+  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes','m-next-task','m-task-deadline','m-task-responsible'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-task-done').checked = false;
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
   document.getElementById('m-decision').value = 'pending';
@@ -637,13 +735,19 @@ async function saveModal() {
     price: document.getElementById('m-price').value,
     launch: document.getElementById('m-launch').value,
     decision: document.getElementById('m-decision').value,
-    notes: document.getElementById('m-notes').value
+    notes: document.getElementById('m-notes').value,
+    nextTask: document.getElementById('m-next-task').value,
+    taskDeadline: document.getElementById('m-task-deadline').value,
+    taskResponsible: document.getElementById('m-task-responsible').value,
+    taskDone: document.getElementById('m-task-done').checked
   };
   if (editingId) {
     var idx = DATA.findIndex(x => x.id === editingId);
     if (idx >= 0) {
       // Preserve meetingSummary if it exists
       if (DATA[idx].meetingSummary) obj.meetingSummary = DATA[idx].meetingSummary;
+      // Preserve taskDone toggle state if task text unchanged
+      if (!obj.nextTask && DATA[idx].nextTask) { obj.nextTask = DATA[idx].nextTask; obj.taskDeadline = DATA[idx].taskDeadline; obj.taskResponsible = DATA[idx].taskResponsible; obj.taskDone = DATA[idx].taskDone; }
       obj.id = editingId;
       DATA[idx] = obj;
     }
