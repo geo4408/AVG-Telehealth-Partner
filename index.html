@@ -227,20 +227,36 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
-// ========== DATA (this is the persistent storage — lives inside the HTML) ==========
-var DATA = [
+// ========== FIREBASE CONFIG ==========
+firebase.initializeApp({
+  apiKey: "AIzaSyAvNGtUi6xoV_cMozgsDfJ9qfhOPvRe7N0",
+  authDomain: "adv-meetings.firebaseapp.com",
+  projectId: "adv-meetings",
+  storageBucket: "adv-meetings.firebasestorage.app",
+  messagingSenderId: "1044887682497",
+  appId: "1:1044887682497:web:cc7944ddd314ea79144340"
+});
+var db = firebase.firestore();
+var COLLECTION = 'companies';
+
+// ========== DATA (fallback seed — used only if Firestore is empty) ==========
+var SEED_DATA = [
   // ===== ЗАБУКАННЫЕ ВСТРЕЧИ (по дате) =====
   {
     id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
     scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
-    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $5/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
+    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $50/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
     meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
-    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $5/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
+    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $50/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
     meetingSummary: {
       verdict: "positive",
       verdictText: "Хороший кандидат — покрывает все 50 штатов, turnkey решение, разумная цена. Нужно уточнить слоты и пептиды.",
-      pricing: "$5000 setup + $500/мес tech + $1000/мес минимум (20 консультов) + $5/консульт далее",
+      pricing: "$5000 setup + $500/мес tech + $1000/мес минимум (20 консультов) + $50/консульт далее",
       nextSteps: "Получить proposal, назначить follow-up звонок с Shafi (+1 6302306699)",
       keyContacts: "Shafi Ahamed: +917708614041 / US: +1 6302306699",
       partners: "WebDoctors (webdoctors.com), Belmar Pharma (belmarpharmasolutions.com)"
@@ -340,9 +356,108 @@ var DATA = [
   }
 ];
 
+var DATA = [];
 var currentFilter = 'all';
 var editingId = null;
+var syncStatus = 'idle'; // idle, syncing, synced, error
 
+// ========== FIRESTORE FUNCTIONS ==========
+function setSyncStatus(status, msg) {
+  syncStatus = status;
+  var el = document.getElementById('sync-indicator');
+  if (!el) return;
+  var labels = {idle:'', syncing:'⏳ Сохранение...', synced:'✅ Сохранено в облако', error:'❌ Ошибка: ' + (msg||'')};
+  var colors = {idle:'transparent', syncing:'#fbbf24', synced:'#34d399', error:'#f87171'};
+  el.textContent = labels[status] || '';
+  el.style.color = colors[status] || '#94a3b8';
+  if (status === 'synced') setTimeout(function(){ if (syncStatus === 'synced') { el.textContent = ''; } }, 3000);
+}
+
+async function loadFromFirestore() {
+  try {
+    var snapshot = await db.collection(COLLECTION).get();
+    if (snapshot.empty) return [];
+    var arr = [];
+    snapshot.forEach(function(doc) {
+      var d = doc.data();
+      d._docId = doc.id;
+      arr.push(d);
+    });
+    return arr;
+  } catch(e) {
+    console.error('Firestore load error:', e);
+    return [];
+  }
+}
+
+async function saveToFirestore(obj) {
+  setSyncStatus('syncing');
+  try {
+    var docId = String(obj.id);
+    var saveObj = Object.assign({}, obj);
+    delete saveObj._docId;
+    await db.collection(COLLECTION).doc(docId).set(saveObj);
+    setSyncStatus('synced');
+  } catch(e) {
+    console.error('Firestore save error:', e);
+    setSyncStatus('error', e.message);
+  }
+}
+
+async function deleteFromFirestore(id) {
+  setSyncStatus('syncing');
+  try {
+    await db.collection(COLLECTION).doc(String(id)).delete();
+    setSyncStatus('synced');
+  } catch(e) {
+    console.error('Firestore delete error:', e);
+    setSyncStatus('error', e.message);
+  }
+}
+
+async function seedFirestore() {
+  setSyncStatus('syncing');
+  try {
+    var batch = db.batch();
+    SEED_DATA.forEach(function(item) {
+      var docRef = db.collection(COLLECTION).doc(String(item.id));
+      batch.set(docRef, item);
+    });
+    await batch.commit();
+    setSyncStatus('synced');
+    console.log('Seeded ' + SEED_DATA.length + ' companies to Firestore');
+  } catch(e) {
+    console.error('Firestore seed error:', e);
+    setSyncStatus('error', e.message);
+  }
+}
+
+async function initApp() {
+  // Add sync indicator to header
+  var headerActions = document.querySelector('.header-actions');
+  if (headerActions) {
+    var indicator = document.createElement('span');
+    indicator.id = 'sync-indicator';
+    indicator.style.cssText = 'font-size:12px;padding:8px 12px;color:#94a3b8;';
+    headerActions.insertBefore(indicator, headerActions.firstChild);
+  }
+
+  setSyncStatus('syncing');
+  var firestoreData = await loadFromFirestore();
+
+  if (firestoreData.length > 0) {
+    DATA = firestoreData;
+    console.log('Loaded ' + DATA.length + ' companies from Firestore');
+    setSyncStatus('synced');
+  } else {
+    console.log('Firestore empty — seeding with SEED_DATA...');
+    DATA = SEED_DATA.slice();
+    await seedFirestore();
+  }
+  renderAll();
+}
+
+// ========== UI FUNCTIONS ==========
 function getTotal(c) { return c.scores.s1 + c.scores.s2 + c.scores.s3 + c.scores.s4 + c.scores.s5; }
 function isQualified(c) { return getTotal(c) >= 18; }
 
@@ -443,7 +558,7 @@ function addCompany() {
 
 function closeModal() { document.getElementById('edit-modal').classList.remove('show'); }
 
-function saveModal() {
+async function saveModal() {
   var obj = {
     name: document.getElementById('m-name').value,
     url: document.getElementById('m-url').value,
@@ -465,19 +580,28 @@ function saveModal() {
   };
   if (editingId) {
     var idx = DATA.findIndex(x => x.id === editingId);
-    if (idx >= 0) { obj.id = editingId; DATA[idx] = obj; }
+    if (idx >= 0) {
+      // Preserve meetingSummary if it exists
+      if (DATA[idx].meetingSummary) obj.meetingSummary = DATA[idx].meetingSummary;
+      obj.id = editingId;
+      DATA[idx] = obj;
+    }
   } else {
     obj.id = Math.max(0, ...DATA.map(x => x.id)) + 1;
     DATA.push(obj);
   }
   closeModal();
   renderAll();
+  // Sync to Firestore
+  await saveToFirestore(obj);
 }
 
-function deleteRow(id) {
+async function deleteRow(id) {
   if (!confirm('Удалить эту компанию?')) return;
   DATA = DATA.filter(x => x.id !== id);
   renderAll();
+  // Sync delete to Firestore
+  await deleteFromFirestore(id);
 }
 
 function toggleSummary(id) {
@@ -489,16 +613,15 @@ function renderAll() { renderStats(); renderTable(); }
 
 function saveFile() {
   var html = document.documentElement.outerHTML;
-  // Update DATA in the saved version
-  var dataStr = 'var DATA = ' + JSON.stringify(DATA, null, 2) + ';';
-  html = html.replace(/var DATA = \[[\s\S]*?\];/, dataStr);
+  var dataStr = 'var SEED_DATA = ' + JSON.stringify(DATA, null, 2) + ';';
+  html = html.replace(/var SEED_DATA = \[[\s\S]*?\];/, dataStr);
   var blob = new Blob(['<!DOCTYPE html>\n<html lang="ru">\n' + html.split('<html lang="ru">')[1]], {type: 'text/html'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'AVG_Telehealth_Tracker.html';
   a.click();
   URL.revokeObjectURL(a.href);
-  alert('Файл сохранён! Замени старый файл новым скачанным.');
+  alert('Файл сохранён как бэкап! Основные данные хранятся в Firebase.');
 }
 
 // Close modal on outside click
@@ -506,7 +629,8 @@ document.getElementById('edit-modal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-renderAll();
+// ========== START APP ==========
+initApp();
 </script>
 </body>
 </html>
