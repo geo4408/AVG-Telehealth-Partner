@@ -76,6 +76,18 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 .decision-nogo { color: #f87171; font-weight: 700; }
 .decision-pending { color: #94a3b8; }
 
+.meeting-log-entry { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; position: relative; }
+.meeting-log-entry .log-date { color: #38bdf8; font-weight: 600; font-size: 12px; }
+.meeting-log-entry .log-type { background: #334155; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 8px; }
+.meeting-log-entry .log-type-first { background: #064e3b; color: #34d399; }
+.meeting-log-entry .log-type-followup { background: #312e81; color: #a5b4fc; }
+.meeting-log-entry .log-type-demo { background: #78350f; color: #fcd34d; }
+.meeting-log-entry .log-summary { color: #cbd5e1; font-size: 12px; margin-top: 6px; line-height: 1.5; white-space: pre-wrap; }
+.meeting-log-entry .log-delete { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #475569; cursor: pointer; font-size: 12px; }
+.meeting-log-entry .log-delete:hover { color: #f87171; }
+.meetings-log-badge { background: #1e3a5f; color: #60a5fa; padding: 2px 8px; border-radius: 10px; font-size: 10px; cursor: pointer; margin-left: 4px; }
+.meetings-log-badge:hover { background: #2563eb; color: #fff; }
+
 .notes-cell { max-width: 200px; }
 .notes-cell .editable { font-size: 11px; color: #94a3b8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 
@@ -285,6 +297,24 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
       <h3>❓ Чеклист вопросов</h3>
       <label>Вопросы (через ; — можно добавить [x] для отмеченных)</label>
       <textarea id="m-checklist" placeholder="Blood tests?; Можем ли видеть прескрипшны?; [x] Уже уточнили цены"></textarea>
+    </div>
+
+    <div class="meeting-section">
+      <h3>📝 Лог встреч</h3>
+      <div id="m-meetings-log" style="margin-bottom:10px"></div>
+      <div style="background:#0f172a;border:1px solid #475569;border-radius:8px;padding:12px;margin-top:8px">
+        <label style="color:#38bdf8;font-weight:600">+ Добавить запись о встрече</label>
+        <input id="m-meeting-log-date" placeholder="Feb 27, 2026" style="margin-top:6px">
+        <select id="m-meeting-log-type" style="margin-top:4px">
+          <option value="first">Первичная встреча</option>
+          <option value="followup">Follow-up</option>
+          <option value="demo">Демо / Презентация</option>
+          <option value="call">Звонок</option>
+          <option value="email">Email-переписка</option>
+        </select>
+        <textarea id="m-meeting-log-summary" placeholder="Коротко: о чём говорили, ключевые выводы, что решили" style="margin-top:4px;min-height:80px"></textarea>
+        <button class="btn btn-primary" style="margin-top:6px;width:100%" onclick="addMeetingLog()">Добавить запись</button>
+      </div>
     </div>
 
     <div class="modal-actions">
@@ -696,6 +726,26 @@ function toggleContacts(id) {
   if (panel) panel.classList.toggle('show');
 }
 
+function toggleMeetingsLog(id) {
+  var panel = document.getElementById('meetingslog-' + id);
+  if (panel) panel.classList.toggle('show');
+}
+
+function renderMeetingsLogInline(c) {
+  var logs = c.meetingsLog || [];
+  if (!logs.length) return '';
+  var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
+  var html = '<h4 style="color:#38bdf8;margin-bottom:6px">📝 История встреч</h4>';
+  logs.forEach(function(log) {
+    html += '<div style="border-left:2px solid #334155;padding-left:8px;margin-bottom:8px">'
+      + '<div style="font-size:11px"><strong style="color:#38bdf8">' + log.date + '</strong> '
+      + '<span style="color:#64748b;font-size:10px">(' + (typeLabels[log.type]||log.type) + ')</span></div>'
+      + '<div style="font-size:11px;color:#cbd5e1;margin-top:2px;white-space:pre-wrap">' + log.summary + '</div>'
+      + '</div>';
+  });
+  return html;
+}
+
 function renderTable() {
   var filtered = DATA;
   if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
@@ -744,6 +794,7 @@ function renderTable() {
         <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
         ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
         ${(c.contactName || (c.pros && c.pros.length) || (c.checklist && c.checklist.length)) ? '<span class="summary-toggle" onclick="toggleContacts('+c.id+')">👥 Контакты/Инфо</span><div class="summary-panel" id="contacts-'+c.id+'">'+renderContactsPanel(c)+'</div>' : ''}
+        ${(c.meetingsLog && c.meetingsLog.length) ? '<span class="summary-toggle" onclick="toggleMeetingsLog('+c.id+')">📝 Встречи ('+c.meetingsLog.length+')</span><div class="summary-panel" id="meetingslog-'+c.id+'">'+renderMeetingsLogInline(c)+'</div>' : ''}
       </td>
       <td><div class="row-actions">
         <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
@@ -792,6 +843,7 @@ function editRow(id) {
   document.getElementById('m-pros').value = (c.pros || []).join('; ');
   document.getElementById('m-pros-cons').value = (c.cons || []).join('; ');
   document.getElementById('m-checklist').value = (c.checklist || []).map(q => (q.done ? '[x] ' : '') + q.text).join('; ');
+  renderMeetingsLog();
   document.getElementById('edit-modal').classList.add('show');
 }
 
@@ -803,6 +855,7 @@ function addCompany() {
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
   document.getElementById('m-decision').value = 'pending';
+  document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
   document.getElementById('edit-modal').classList.add('show');
 }
 
@@ -842,8 +895,9 @@ async function saveModal() {
   if (editingId) {
     var idx = DATA.findIndex(x => x.id === editingId);
     if (idx >= 0) {
-      // Preserve meetingSummary if it exists
+      // Preserve meetingSummary and meetingsLog
       if (DATA[idx].meetingSummary) obj.meetingSummary = DATA[idx].meetingSummary;
+      if (DATA[idx].meetingsLog) obj.meetingsLog = DATA[idx].meetingsLog;
       // Preserve taskDone toggle state if task text unchanged
       if (!obj.nextTask && DATA[idx].nextTask) { obj.nextTask = DATA[idx].nextTask; obj.taskDeadline = DATA[idx].taskDeadline; obj.taskResponsible = DATA[idx].taskResponsible; obj.taskDone = DATA[idx].taskDone; }
       obj.id = editingId;
@@ -870,6 +924,51 @@ async function deleteRow(id) {
 function toggleSummary(id) {
   var panel = document.getElementById('summary-' + id);
   if (panel) panel.classList.toggle('show');
+}
+
+// ========== MEETING LOG ==========
+function renderMeetingsLog() {
+  var c = DATA.find(x => x.id === editingId);
+  var logs = (c && c.meetingsLog) || [];
+  var html = '';
+  if (logs.length === 0) {
+    html = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
+  } else {
+    var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
+    logs.forEach(function(log, i) {
+      var typeClass = log.type === 'first' ? 'log-type-first' : log.type === 'followup' ? 'log-type-followup' : log.type === 'demo' ? 'log-type-demo' : '';
+      html += '<div class="meeting-log-entry">'
+        + '<div><span class="log-date">📅 ' + log.date + '</span>'
+        + '<span class="log-type ' + typeClass + '">' + (typeLabels[log.type] || log.type) + '</span></div>'
+        + '<div class="log-summary">' + log.summary + '</div>'
+        + '<button class="log-delete" onclick="deleteMeetingLog(' + i + ')" title="Удалить">✕</button>'
+        + '</div>';
+    });
+  }
+  document.getElementById('m-meetings-log').innerHTML = html;
+}
+
+function addMeetingLog() {
+  var date = document.getElementById('m-meeting-log-date').value.trim();
+  var type = document.getElementById('m-meeting-log-type').value;
+  var summary = document.getElementById('m-meeting-log-summary').value.trim();
+  if (!date || !summary) { alert('Укажите дату и краткое содержание встречи'); return; }
+  var c = DATA.find(x => x.id === editingId);
+  if (!c) return;
+  if (!c.meetingsLog) c.meetingsLog = [];
+  c.meetingsLog.unshift({ date: date, type: type, summary: summary, addedAt: new Date().toISOString() });
+  document.getElementById('m-meeting-log-date').value = '';
+  document.getElementById('m-meeting-log-summary').value = '';
+  renderMeetingsLog();
+}
+
+async function deleteMeetingLog(idx) {
+  if (!confirm('Удалить эту запись?')) return;
+  var c = DATA.find(x => x.id === editingId);
+  if (c && c.meetingsLog) {
+    c.meetingsLog.splice(idx, 1);
+    renderMeetingsLog();
+  }
 }
 
 function renderAll() { renderStats(); renderTable(); }
