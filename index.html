@@ -45,6 +45,9 @@ tbody td { padding: 10px 12px; vertical-align: middle; }
 .company-name { font-weight: 600; color: #f1f5f9; }
 .company-url { font-size: 11px; color: #64748b; }
 .company-url a { color: #38bdf8; text-decoration: none; }
+    .email-link { margin-top: 3px; }
+    .email-link a { color: #a78bfa; font-size: 11px; text-decoration: none; }
+    .email-link a:hover { text-decoration: underline; color: #c4b5fd; }
 
 .score-cell { text-align: center; }
 .score-badge { display: inline-block; width: 28px; height: 28px; border-radius: 6px; line-height: 28px; text-align: center; font-weight: 700; font-size: 12px; }
@@ -160,30 +163,30 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 <div class="header">
   <h1>AVG <span>Telehealth Partner Tracker</span></h1>
   <div class="header-actions">
-    <button class="btn btn-outline" onclick="addCompany()">+ Добавить компанию</button>
-    <button class="btn btn-success" onclick="saveFile()">💾 Сохранить файл</button>
+    <button class="btn btn-outline" onclick="addCompany()">+ ÐÐ¾Ð±Ð°Ð²Ð¸ÑÑ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ</button>
+    <button class="btn btn-success" onclick="saveFile()">ð¾ Ð¡Ð¾ÑÑÐ°Ð½Ð¸ÑÑ ÑÐ°Ð¹Ð»</button>
   </div>
 </div>
 
 <div class="criteria-bar">
-  <span style="font-size:12px;color:#64748b;margin-right:4px;">Критерии (1-5):</span>
-  <div class="criteria-chip"><span class="num">1</span> Поставка врачей</div>
-  <div class="criteria-chip"><span class="num">2</span> 50 штатов</div>
+  <span style="font-size:12px;color:#64748b;margin-right:4px;">ÐÑÐ¸ÑÐµÑÐ¸Ð¸ (1-5):</span>
+  <div class="criteria-chip"><span class="num">1</span> ÐÐ¾ÑÑÐ°Ð²ÐºÐ° Ð²ÑÐ°ÑÐµÐ¹</div>
+  <div class="criteria-chip"><span class="num">2</span> 50 ÑÑÐ°ÑÐ¾Ð²</div>
   <div class="criteria-chip"><span class="num">3</span> White-label + BYO pharmacy</div>
-  <div class="criteria-chip"><span class="num">4</span> TRT/HRT/пептиды/WL</div>
-  <div class="criteria-chip"><span class="num">5</span> Ценовая модель</div>
-  <span style="font-size:11px;color:#475569;margin-left:8px;">Проходной балл: ≥18/25</span>
+  <div class="criteria-chip"><span class="num">4</span> TRT/HRT/Ð¿ÐµÐ¿ÑÐ¸Ð´Ñ/WL</div>
+  <div class="criteria-chip"><span class="num">5</span> Ð¦ÐµÐ½Ð¾Ð²Ð°Ñ Ð¼Ð¾Ð´ÐµÐ»Ñ</div>
+  <span style="font-size:11px;color:#475569;margin-left:8px;">ÐÑÐ¾ÑÐ¾Ð´Ð½Ð¾Ð¹ Ð±Ð°Ð»Ð»: â¥18/25</span>
 </div>
 
 <div class="stats-bar" id="stats-bar"></div>
 
 <div class="filters">
-  <span style="font-size:12px;color:#64748b;">Фильтр:</span>
-  <button class="filter-btn active" onclick="setFilter('all')">Все</button>
-  <button class="filter-btn" onclick="setFilter('qualified')">Квалифицированные</button>
-  <button class="filter-btn" onclick="setFilter('booked')">Встреча забукана</button>
-  <button class="filter-btn" onclick="setFilter('done')">Встреча проведена</button>
-  <button class="filter-btn" onclick="setFilter('tasks')">🔥 Активные задачи</button>
+  <span style="font-size:12px;color:#64748b;">Ð¤Ð¸Ð»ÑÑÑ:</span>
+  <button class="filter-btn active" onclick="setFilter('all')">ÐÑÐµ</button>
+  <button class="filter-btn" onclick="setFilter('qualified')">ÐÐ²Ð°Ð»Ð¸ÑÐ¸ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÐµ</button>
+  <button class="filter-btn" onclick="setFilter('booked')">ÐÑÑÑÐµÑÐ° Ð·Ð°Ð±ÑÐºÐ°Ð½Ð°</button>
+  <button class="filter-btn" onclick="setFilter('done')">ÐÑÑÑÐµÑÐ° Ð¿ÑÐ¾Ð²ÐµÐ´ÐµÐ½Ð°</button>
+  <button class="filter-btn" onclick="setFilter('tasks')">ð¥ ÐÐºÑÐ¸Ð²Ð½ÑÐµ Ð·Ð°Ð´Ð°ÑÐ¸</button>
 </div>
 
 <div class="table-wrap">
@@ -191,20 +194,20 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
     <thead>
       <tr>
         <th>#</th>
-        <th>Компания</th>
-        <th class="score-cell">Врачи</th>
-        <th class="score-cell">50 шт.</th>
+        <th>ÐÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ</th>
+        <th class="score-cell">ÐÑÐ°ÑÐ¸</th>
+        <th class="score-cell">50 ÑÑ.</th>
         <th class="score-cell">WL+Pharm</th>
-        <th class="score-cell">Релев.</th>
-        <th class="score-cell">Цена</th>
-        <th class="score-cell">Итого</th>
-        <th>Статус</th>
-        <th>Встреча / Zoom</th>
-        <th>Цена/визит</th>
-        <th>Запуск</th>
-        <th>Решение</th>
-        <th>Задача / Next Step</th>
-        <th>Заметки</th>
+        <th class="score-cell">Ð ÐµÐ»ÐµÐ².</th>
+        <th class="score-cell">Ð¦ÐµÐ½Ð°</th>
+        <th class="score-cell">ÐÑÐ¾Ð³Ð¾</th>
+        <th>Ð¡ÑÐ°ÑÑÑ</th>
+        <th>ÐÑÑÑÐµÑÐ° / Zoom</th>
+        <th>Ð¦ÐµÐ½Ð°/Ð²Ð¸Ð·Ð¸Ñ</th>
+        <th>ÐÐ°Ð¿ÑÑÐº</th>
+        <th>Ð ÐµÑÐµÐ½Ð¸Ðµ</th>
+        <th>ÐÐ°Ð´Ð°ÑÐ° / Next Step</th>
+        <th>ÐÐ°Ð¼ÐµÑÐºÐ¸</th>
         <th></th>
       </tr>
     </thead>
@@ -215,111 +218,111 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 <!-- Edit Modal -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
-    <h2 id="modal-title">Редактировать компанию</h2>
-    <label>Название</label>
+    <h2 id="modal-title">Ð ÐµÐ´Ð°ÐºÑÐ¸ÑÐ¾Ð²Ð°ÑÑ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ</h2>
+    <label>ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ</label>
     <input id="m-name" placeholder="Company Name">
-    <label>Сайт</label>
+    <label>Ð¡Ð°Ð¹Ñ</label>
     <input id="m-url" placeholder="https://...">
-    <label>Контакт (URL/email для букинга)</label>
-    <input id="m-contact" placeholder="https://... или email">
+    <label>ÐÐ¾Ð½ÑÐ°ÐºÑ (URL/email Ð´Ð»Ñ Ð±ÑÐºÐ¸Ð½Ð³Ð°)</label>
+    <input id="m-contact" placeholder="https://... Ð¸Ð»Ð¸ email">
 
     <div class="score-input-group">
-      <div class="score-input-item"><label>Врачи</label><select id="m-s1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>50 шт.</label><select id="m-s2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>ÐÑÐ°ÑÐ¸</label><select id="m-s1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>50 ÑÑ.</label><select id="m-s2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
       <div class="score-input-item"><label>WL+Pharm</label><select id="m-s3"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>Релев.</label><select id="m-s4"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>Цена</label><select id="m-s5"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>Ð ÐµÐ»ÐµÐ².</label><select id="m-s4"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
+      <div class="score-input-item"><label>Ð¦ÐµÐ½Ð°</label><select id="m-s5"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
     </div>
 
-    <label>Статус</label>
+    <label>Ð¡ÑÐ°ÑÑÑ</label>
     <select id="m-status">
-      <option value="none">Не начат</option>
-      <option value="contacted">Форма/Email отправлен</option>
-      <option value="booked">Встреча забукана</option>
-      <option value="done">Встреча проведена</option>
-      <option value="rejected">Не подходит</option>
+      <option value="none">ÐÐµ Ð½Ð°ÑÐ°Ñ</option>
+      <option value="contacted">Ð¤Ð¾ÑÐ¼Ð°/Email Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½</option>
+      <option value="booked">ÐÑÑÑÐµÑÐ° Ð·Ð°Ð±ÑÐºÐ°Ð½Ð°</option>
+      <option value="done">ÐÑÑÑÐµÑÐ° Ð¿ÑÐ¾Ð²ÐµÐ´ÐµÐ½Ð°</option>
+      <option value="rejected">ÐÐµ Ð¿Ð¾Ð´ÑÐ¾Ð´Ð¸Ñ</option>
     </select>
 
     <div class="meeting-section">
-      <h3>После встречи</h3>
-      <label>Дата/время встречи</label>
+      <h3>ÐÐ¾ÑÐ»Ðµ Ð²ÑÑÑÐµÑÐ¸</h3>
+      <label>ÐÐ°ÑÐ°/Ð²ÑÐµÐ¼Ñ Ð²ÑÑÑÐµÑÐ¸</label>
       <input id="m-meeting-date" placeholder="Feb 27, 10:00 AM ET">
-      <label>Ссылка на Zoom/Meet</label>
-      <input id="m-meeting-link" placeholder="https://zoom.us/j/... или https://meet.google.com/...">
-      <label>Цена за визит / модель</label>
+      <label>Ð¡ÑÑÐ»ÐºÐ° Ð½Ð° Zoom/Meet</label>
+      <input id="m-meeting-link" placeholder="https://zoom.us/j/... Ð¸Ð»Ð¸ https://meet.google.com/...">
+      <label>Ð¦ÐµÐ½Ð° Ð·Ð° Ð²Ð¸Ð·Ð¸Ñ / Ð¼Ð¾Ð´ÐµÐ»Ñ</label>
       <input id="m-price" placeholder="$75/consult, $X/month, rev-share...">
-      <label>Скорость запуска</label>
+      <label>Ð¡ÐºÐ¾ÑÐ¾ÑÑÑ Ð·Ð°Ð¿ÑÑÐºÐ°</label>
       <input id="m-launch" placeholder="2-4 weeks, 30 days, etc.">
-      <label>Решение</label>
+      <label>Ð ÐµÑÐµÐ½Ð¸Ðµ</label>
       <select id="m-decision">
-        <option value="pending">Ожидание</option>
-        <option value="go">GO ✓</option>
-        <option value="nogo">NO-GO ✗</option>
+        <option value="pending">ÐÐ¶Ð¸Ð´Ð°Ð½Ð¸Ðµ</option>
+        <option value="go">GO â</option>
+        <option value="nogo">NO-GO â</option>
       </select>
-      <label>Заметки</label>
-      <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
+      <label>ÐÐ°Ð¼ÐµÑÐºÐ¸</label>
+      <textarea id="m-notes" placeholder="ÐÐ»ÑÑÐµÐ²ÑÐµ Ð¼Ð¾Ð¼ÐµÐ½ÑÑ, Ð²Ð¿ÐµÑÐ°ÑÐ»ÐµÐ½Ð¸Ñ, ÐºÐ¾Ð½ÑÐ°ÐºÑÑ..."></textarea>
     </div>
 
     <div class="meeting-section">
-      <h3>📋 Задача / Next Step</h3>
-      <label>Что нужно сделать</label>
-      <input id="m-next-task" placeholder="Получить proposal, назначить follow-up, подписать контракт...">
-      <label>Дедлайн</label>
-      <input id="m-task-deadline" placeholder="Mar 5 или 2025-03-05">
-      <label>Ответственный</label>
-      <input id="m-task-responsible" placeholder="Имя ответственного (напр. Alina Rakhimzhanova)">
+      <h3>ð ÐÐ°Ð´Ð°ÑÐ° / Next Step</h3>
+      <label>Ð§ÑÐ¾ Ð½ÑÐ¶Ð½Ð¾ ÑÐ´ÐµÐ»Ð°ÑÑ</label>
+      <input id="m-next-task" placeholder="ÐÐ¾Ð»ÑÑÐ¸ÑÑ proposal, Ð½Ð°Ð·Ð½Ð°ÑÐ¸ÑÑ follow-up, Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ°ÑÑ ÐºÐ¾Ð½ÑÑÐ°ÐºÑ...">
+      <label>ÐÐµÐ´Ð»Ð°Ð¹Ð½</label>
+      <input id="m-task-deadline" placeholder="Mar 5 Ð¸Ð»Ð¸ 2025-03-05">
+      <label>ÐÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½ÑÐ¹</label>
+      <input id="m-task-responsible" placeholder="ÐÐ¼Ñ Ð¾ÑÐ²ÐµÑÑÑÐ²ÐµÐ½Ð½Ð¾Ð³Ð¾ (Ð½Ð°Ð¿Ñ. Alina Rakhimzhanova)">
       <label style="display:inline-flex;align-items:center;gap:8px;margin-top:8px">
-        <input type="checkbox" id="m-task-done" style="width:auto"> Задача выполнена
+        <input type="checkbox" id="m-task-done" style="width:auto"> ÐÐ°Ð´Ð°ÑÐ° Ð²ÑÐ¿Ð¾Ð»Ð½ÐµÐ½Ð°
       </label>
     </div>
 
     <div class="meeting-section">
-      <h3>👥 Контакты</h3>
-      <label>Контактное лицо</label>
-      <input id="m-contact-name" placeholder="Имя контактного лица">
+      <h3>ð¥ ÐÐ¾Ð½ÑÐ°ÐºÑÑ</h3>
+      <label>ÐÐ¾Ð½ÑÐ°ÐºÑÐ½Ð¾Ðµ Ð»Ð¸ÑÐ¾</label>
+      <input id="m-contact-name" placeholder="ÐÐ¼Ñ ÐºÐ¾Ð½ÑÐ°ÐºÑÐ½Ð¾Ð³Ð¾ Ð»Ð¸ÑÐ°">
       <label>Email</label>
       <input id="m-contact-email" placeholder="email@company.com">
-      <label>Телефон / WhatsApp</label>
+      <label>Ð¢ÐµÐ»ÐµÑÐ¾Ð½ / WhatsApp</label>
       <input id="m-contact-phone" placeholder="+1 234 567 8900">
-      <label>Должность</label>
+      <label>ÐÐ¾Ð»Ð¶Ð½Ð¾ÑÑÑ</label>
       <input id="m-contact-role" placeholder="CEO, Account Manager, etc.">
     </div>
 
     <div class="meeting-section">
-      <h3>💪 Сильные / Слабые стороны</h3>
-      <label>Сильные стороны (через ;)</label>
-      <textarea id="m-pros" placeholder="50 штатов; Быстрый запуск; Хорошие цены"></textarea>
-      <label>Слабые стороны (через ;)</label>
-      <textarea id="m-pros-cons" placeholder="Нет TRT; Долгий онбординг"></textarea>
+      <h3>ðª Ð¡Ð¸Ð»ÑÐ½ÑÐµ / Ð¡Ð»Ð°Ð±ÑÐµ ÑÑÐ¾ÑÐ¾Ð½Ñ</h3>
+      <label>Ð¡Ð¸Ð»ÑÐ½ÑÐµ ÑÑÐ¾ÑÐ¾Ð½Ñ (ÑÐµÑÐµÐ· ;)</label>
+      <textarea id="m-pros" placeholder="50 ÑÑÐ°ÑÐ¾Ð²; ÐÑÑÑÑÑÐ¹ Ð·Ð°Ð¿ÑÑÐº; Ð¥Ð¾ÑÐ¾ÑÐ¸Ðµ ÑÐµÐ½Ñ"></textarea>
+      <label>Ð¡Ð»Ð°Ð±ÑÐµ ÑÑÐ¾ÑÐ¾Ð½Ñ (ÑÐµÑÐµÐ· ;)</label>
+      <textarea id="m-pros-cons" placeholder="ÐÐµÑ TRT; ÐÐ¾Ð»Ð³Ð¸Ð¹ Ð¾Ð½Ð±Ð¾ÑÐ´Ð¸Ð½Ð³"></textarea>
     </div>
 
     <div class="meeting-section">
-      <h3>❓ Чеклист вопросов</h3>
-      <label>Вопросы (через ; — можно добавить [x] для отмеченных)</label>
-      <textarea id="m-checklist" placeholder="Blood tests?; Можем ли видеть прескрипшны?; [x] Уже уточнили цены"></textarea>
+      <h3>â Ð§ÐµÐºÐ»Ð¸ÑÑ Ð²Ð¾Ð¿ÑÐ¾ÑÐ¾Ð²</h3>
+      <label>ÐÐ¾Ð¿ÑÐ¾ÑÑ (ÑÐµÑÐµÐ· ; â Ð¼Ð¾Ð¶Ð½Ð¾ Ð´Ð¾Ð±Ð°Ð²Ð¸ÑÑ [x] Ð´Ð»Ñ Ð¾ÑÐ¼ÐµÑÐµÐ½Ð½ÑÑ)</label>
+      <textarea id="m-checklist" placeholder="Blood tests?; ÐÐ¾Ð¶ÐµÐ¼ Ð»Ð¸ Ð²Ð¸Ð´ÐµÑÑ Ð¿ÑÐµÑÐºÑÐ¸Ð¿ÑÐ½Ñ?; [x] Ð£Ð¶Ðµ ÑÑÐ¾ÑÐ½Ð¸Ð»Ð¸ ÑÐµÐ½Ñ"></textarea>
     </div>
 
     <div class="meeting-section">
-      <h3>📝 Лог встреч</h3>
+      <h3>ð ÐÐ¾Ð³ Ð²ÑÑÑÐµÑ</h3>
       <div id="m-meetings-log" style="margin-bottom:10px"></div>
       <div style="background:#0f172a;border:1px solid #475569;border-radius:8px;padding:12px;margin-top:8px">
-        <label style="color:#38bdf8;font-weight:600">+ Добавить запись о встрече</label>
+        <label style="color:#38bdf8;font-weight:600">+ ÐÐ¾Ð±Ð°Ð²Ð¸ÑÑ Ð·Ð°Ð¿Ð¸ÑÑ Ð¾ Ð²ÑÑÑÐµÑÐµ</label>
         <input id="m-meeting-log-date" placeholder="Feb 27, 2026" style="margin-top:6px">
         <select id="m-meeting-log-type" style="margin-top:4px">
-          <option value="first">Первичная встреча</option>
+          <option value="first">ÐÐµÑÐ²Ð¸ÑÐ½Ð°Ñ Ð²ÑÑÑÐµÑÐ°</option>
           <option value="followup">Follow-up</option>
-          <option value="demo">Демо / Презентация</option>
-          <option value="call">Звонок</option>
-          <option value="email">Email-переписка</option>
+          <option value="demo">ÐÐµÐ¼Ð¾ / ÐÑÐµÐ·ÐµÐ½ÑÐ°ÑÐ¸Ñ</option>
+          <option value="call">ÐÐ²Ð¾Ð½Ð¾Ðº</option>
+          <option value="email">Email-Ð¿ÐµÑÐµÐ¿Ð¸ÑÐºÐ°</option>
         </select>
-        <textarea id="m-meeting-log-summary" placeholder="Коротко: о чём говорили, ключевые выводы, что решили" style="margin-top:4px;min-height:80px"></textarea>
-        <button class="btn btn-primary" style="margin-top:6px;width:100%" onclick="addMeetingLog()">Добавить запись</button>
+        <textarea id="m-meeting-log-summary" placeholder="ÐÐ¾ÑÐ¾ÑÐºÐ¾: Ð¾ ÑÑÐ¼ Ð³Ð¾Ð²Ð¾ÑÐ¸Ð»Ð¸, ÐºÐ»ÑÑÐµÐ²ÑÐµ Ð²ÑÐ²Ð¾Ð´Ñ, ÑÑÐ¾ ÑÐµÑÐ¸Ð»Ð¸" style="margin-top:4px;min-height:80px"></textarea>
+        <button class="btn btn-primary" style="margin-top:6px;width:100%" onclick="addMeetingLog()">ÐÐ¾Ð±Ð°Ð²Ð¸ÑÑ Ð·Ð°Ð¿Ð¸ÑÑ</button>
       </div>
     </div>
 
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">Отмена</button>
-      <button class="btn btn-primary" onclick="saveModal()">Сохранить</button>
+      <button class="btn btn-outline" onclick="closeModal()">ÐÑÐ¼ÐµÐ½Ð°</button>
+      <button class="btn btn-primary" onclick="saveModal()">Ð¡Ð¾ÑÑÐ°Ð½Ð¸ÑÑ</button>
     </div>
   </div>
 </div>
@@ -341,20 +344,20 @@ firebase.initializeApp({
 var db = firebase.firestore();
 var COLLECTION = 'companies';
 
-// ========== DATA (fallback seed — used only if Firestore is empty) ==========
+// ========== DATA (fallback seed â used only if Firestore is empty) ==========
 var SEED_DATA = [
-  // ===== ЗАБУКАННЫЕ ВСТРЕЧИ (по дате) =====
+  // ===== ÐÐÐÐ£ÐÐÐÐÐ«Ð ÐÐ¡Ð¢Ð ÐÐ§Ð (Ð¿Ð¾ Ð´Ð°ÑÐµ) =====
   {
     id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
     scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
-    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $50/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
+    status: "done", meetingDate: "Feb 26, 1:30 PM ET (ÑÑ)", price: "$5000 setup + $500/Ð¼ÐµÑ + $1000/Ð¼ÐµÑ Ð¼Ð¸Ð½ (20 ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ð¹) + $50/ÐºÐ¾Ð½ÑÑÐ»ÑÑ ÑÐ²ÐµÑÑ", launch: "2-4 Ð½ÐµÐ´ÐµÐ»Ð¸ Ð¿Ð¾ÑÐ»Ðµ ÐºÐ¾Ð½ÑÑÐ°ÐºÑÐ°", decision: "pending",
     meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
-    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $50/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
+    notes: "â ÐÐ¡Ð¢Ð ÐÐ§Ð ÐÐ ÐÐÐÐÐÐÐ 26 ÑÐµÐ². ÐÐ¾Ð½ÑÐ°ÐºÑ: Shafi Ahamed, ÑÐµÐ»: +917708614041 / US: +1 6302306699. Ð Ð°Ð±Ð¾ÑÐ°ÑÑ ÑÐµÑÐµÐ· WebDoctors (webdoctors.com/meet-the-doctor) â 6 Ð²ÑÐ°ÑÐµÐ¹, board-certified MDs, Ð²ÑÐµ 50 ÑÑÐ°ÑÐ¾Ð², Chicago-based Ð´Ð¾ 10 PM CT. ÐÐ¿ÑÐµÐºÐ°: Belmar Pharma Solutions (belmarpharmasolutions.com), Ð¼Ð¾Ð³ÑÑ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐ¸ÑÑ Empower. Turnkey: intake â eligibility â ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ°ÑÐ¸Ñ (video/phone, 15-30 Ð¼Ð¸Ð½ callback) â Rx â shipping 24-48Ñ. SSO + patient portal + Shopify Ð¸Ð½ÑÐµÐ³ÑÐ°ÑÐ¸Ñ + GoHighLevel CRM + PracticeQ. ÐÑÐ¾ÑÐ¾ÐºÐ¾Ð»Ñ TRT/GLP/ED ÑÑÐ°Ð½Ð´Ð°ÑÑÐ½ÑÐµ Ð¸Ð»Ð¸ ÑÐ²Ð¾Ð¸. HIPAA, BAA, MSO ÐºÐ¾Ð½ÑÑÐ°ÐºÑÑ. Ð¦ÐµÐ½Ð°: $5K setup, $500/Ð¼ÐµÑ tech, $1000/Ð¼ÐµÑ Ð¼Ð¸Ð½ Ð·Ð° 20 ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ¾Ð², Ð´Ð°Ð»ÐµÐµ $50/ÐºÐ¾Ð½ÑÑÐ»ÑÑ. ÐÐ¸Ð½ÑÑÑ: Ð½ÐµÑ ÑÐ¾ÑÐ½Ð¾Ð³Ð¾ ÑÐ»Ð¾ÑÐ¾Ð²Ð¾Ð³Ð¾ ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ñ (ÑÐ¾Ð»ÑÐºÐ¾ callback 15-30 Ð¼Ð¸Ð½), Ð¿ÐµÐ¿ÑÐ¸Ð´Ñ â Ð½Ðµ Ð²Ð¾ Ð²ÑÐµÑ ÑÑÐ°ÑÐ°Ñ. Ð¡ÐÐÐÐ£Ð®Ð©ÐÐ Ð¨ÐÐ: Ð¿Ð¾Ð»ÑÑÐ¸ÑÑ proposal Ñ ÑÐµÐ½Ð°Ð¼Ð¸ Ð¾Ñ Shafi, Ð½Ð°Ð·Ð½Ð°ÑÐ¸ÑÑ follow-up Ð·Ð²Ð¾Ð½Ð¾Ðº.",
     meetingSummary: {
       verdict: "positive",
-      verdictText: "Хороший кандидат — покрывает все 50 штатов, turnkey решение, разумная цена. Нужно уточнить слоты и пептиды.",
-      pricing: "$5000 setup + $500/мес tech + $1000/мес минимум (20 консультов) + $50/консульт далее",
-      nextSteps: "Получить proposal, назначить follow-up звонок с Shafi (+1 6302306699)",
+      verdictText: "Ð¥Ð¾ÑÐ¾ÑÐ¸Ð¹ ÐºÐ°Ð½Ð´Ð¸Ð´Ð°Ñ â Ð¿Ð¾ÐºÑÑÐ²Ð°ÐµÑ Ð²ÑÐµ 50 ÑÑÐ°ÑÐ¾Ð², turnkey ÑÐµÑÐµÐ½Ð¸Ðµ, ÑÐ°Ð·ÑÐ¼Ð½Ð°Ñ ÑÐµÐ½Ð°. ÐÑÐ¶Ð½Ð¾ ÑÑÐ¾ÑÐ½Ð¸ÑÑ ÑÐ»Ð¾ÑÑ Ð¸ Ð¿ÐµÐ¿ÑÐ¸Ð´Ñ.",
+      pricing: "$5000 setup + $500/Ð¼ÐµÑ tech + $1000/Ð¼ÐµÑ Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ (20 ÐºÐ¾Ð½ÑÑÐ»ÑÑÐ¾Ð²) + $50/ÐºÐ¾Ð½ÑÑÐ»ÑÑ Ð´Ð°Ð»ÐµÐµ",
+      nextSteps: "ÐÐ¾Ð»ÑÑÐ¸ÑÑ proposal, Ð½Ð°Ð·Ð½Ð°ÑÐ¸ÑÑ follow-up Ð·Ð²Ð¾Ð½Ð¾Ðº Ñ Shafi (+1 6302306699)",
       keyContacts: "Shafi Ahamed: +917708614041 / US: +1 6302306699",
       partners: "WebDoctors (webdoctors.com), Belmar Pharma (belmarpharmasolutions.com)"
     }
@@ -362,94 +365,94 @@ var SEED_DATA = [
   {
     id: 8, name: "Qualiphy", url: "https://qualiphy.me", contact: "lorena@qualiphy.me",
     scores: {s1:2, s2:4, s3:2, s4:3, s5:2},
-    status: "booked", meetingDate: "Feb 27, 10:00 AM ET (пт)", price: "$27.99/визит", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Feb 27, 10:00 AM ET (Ð¿Ñ)", price: "$27.99/Ð²Ð¸Ð·Ð¸Ñ", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/xmq-ztmu-ysa",
-    notes: "Встреча пт 27 фев 10:00-10:30 AM ET. 'Qualiphy GFE & Rx Fulfillment Solution' с Lorena Santiago (lorena@qualiphy.me). Google Meet: meet.google.com/xmq-ztmu-ysa. Calendly: calendly.com/events/a4cf7a11-31af-48dc-a5b9-2e555654b21e/google_meet. Pay-per-consult маркетплейс ($27.99/визит). Уточнить модель."
+    notes: "ÐÑÑÑÐµÑÐ° Ð¿Ñ 27 ÑÐµÐ² 10:00-10:30 AM ET. 'Qualiphy GFE & Rx Fulfillment Solution' Ñ Lorena Santiago (lorena@qualiphy.me). Google Meet: meet.google.com/xmq-ztmu-ysa. Calendly: calendly.com/events/a4cf7a11-31af-48dc-a5b9-2e555654b21e/google_meet. Pay-per-consult Ð¼Ð°ÑÐºÐµÑÐ¿Ð»ÐµÐ¹Ñ ($27.99/Ð²Ð¸Ð·Ð¸Ñ). Ð£ÑÐ¾ÑÐ½Ð¸ÑÑ Ð¼Ð¾Ð´ÐµÐ»Ñ."
   },
   {
     id: 13, name: "Bask Health", url: "https://bask.health", contact: "https://bask.health/",
     scores: {s1:3, s2:3, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Feb 27, 11:30 AM ET (пт)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Feb 27, 11:30 AM ET (Ð¿Ñ)", price: "", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/ohw-zxmi-sqa",
-    notes: "Intro & Demo пт 27 фев 11:30 AM с Susanna Lewis. Google Meet: meet.google.com/ohw-zxmi-sqa. Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
+    notes: "Intro & Demo Ð¿Ñ 27 ÑÐµÐ² 11:30 AM Ñ Susanna Lewis. Google Meet: meet.google.com/ohw-zxmi-sqa. ÐÐ»Ð°ÑÑÐ¾ÑÐ¼Ð° Private Beta. Ð¡Ð¾ÑÑ: EMR, Compounding, Pharmacy, Order Mgmt. Ð£ÑÐ¾ÑÐ½Ð¸ÑÑ: Ð¿Ð¾ÑÑÐ°Ð²Ð»ÑÑÑ Ð»Ð¸ Ð²ÑÐ°ÑÐµÐ¹ Ð¸Ð»Ð¸ ÑÐ¾Ð»ÑÐºÐ¾ Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ñ."
   },
   {
     id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "https://whitelblrx.com/",
     scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
-    status: "booked", meetingDate: "Feb 27, 1:30 PM ET (пт)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Feb 27, 1:30 PM ET (Ð¿Ñ)", price: "", launch: "", decision: "pending",
     meetingLink: "https://us06web.zoom.us/j/84051750039?pwd=aJBtBjiZ9cMfXfzxDLOw4bajCZ880s.1",
-    notes: "⭐ GREAT FIT 22/25! Пт 27 фев 1:30 PM. Zoom с Richard Köhn (smartdoctors.us), pwd: 216710. Врачи 50 штатов + Puerto Rico. ED, Weight Loss, OTC. Pharmacy integration. White-label, HIPAA. ПРИОРИТЕТ #2!"
+    notes: "â­ GREAT FIT 22/25! ÐÑ 27 ÑÐµÐ² 1:30 PM. Zoom Ñ Richard KÃ¶hn (smartdoctors.us), pwd: 216710. ÐÑÐ°ÑÐ¸ 50 ÑÑÐ°ÑÐ¾Ð² + Puerto Rico. ED, Weight Loss, OTC. Pharmacy integration. White-label, HIPAA. ÐÐ ÐÐÐ ÐÐ¢ÐÐ¢ #2!"
   },
   {
     id: 10, name: "Beluga Health", url: "https://belugahealth.com", contact: "https://www.belugahealth.com/",
     scores: {s1:5, s2:5, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Mar 1, 9:20 AM ET (вс)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 1, 9:20 AM ET (Ð²Ñ)", price: "", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/yng-dbvd-ctw",
-    notes: "⭐ GOOD FIT 20/25. Вс 1 марта 9:20-9:40 AM ET, Google Meet, Discovery Call с Joshua Kishineff (joshua@belugahealth.com). Physician-only network, all 50 states. True white-label, DTC-native. Перенос: https://beluga-health.cal.com/booking/sDSH2apioFB89Nn1TMvoDH"
+    notes: "â­ GOOD FIT 20/25. ÐÑ 1 Ð¼Ð°ÑÑÐ° 9:20-9:40 AM ET, Google Meet, Discovery Call Ñ Joshua Kishineff (joshua@belugahealth.com). Physician-only network, all 50 states. True white-label, DTC-native. ÐÐµÑÐµÐ½Ð¾Ñ: https://beluga-health.cal.com/booking/sDSH2apioFB89Nn1TMvoDH"
   },
   {
     id: 6, name: "Ola Digital Health", url: "https://oladigital.health", contact: "https://scheduler.zoom.us/alpeshrph/ola-digital-health-",
     scores: {s1:4, s2:5, s3:4, s4:4, s5:3},
-    status: "booked", meetingDate: "Mar 2, 2:45 PM ET (пн)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 2, 2:45 PM ET (Ð¿Ð½)", price: "", launch: "", decision: "pending",
     meetingLink: "https://us02web.zoom.us/j/7572757275?omn=85426982367",
-    notes: "Пн 2 марта 14:45-15:30 ET, Zoom с Alpesh Patel (therxcare@gmail.com). Участники: het, dhwani, sakshi, alpesh @oladigital.health. Сеть врачей во всех 50 штатах."
+    notes: "ÐÐ½ 2 Ð¼Ð°ÑÑÐ° 14:45-15:30 ET, Zoom Ñ Alpesh Patel (therxcare@gmail.com). Ð£ÑÐ°ÑÑÐ½Ð¸ÐºÐ¸: het, dhwani, sakshi, alpesh @oladigital.health. Ð¡ÐµÑÑ Ð²ÑÐ°ÑÐµÐ¹ Ð²Ð¾ Ð²ÑÐµÑ 50 ÑÑÐ°ÑÐ°Ñ."
   },
   {
     id: 15, name: "White Label MD", url: "https://whitelabelmd.com", contact: "https://launch.whitelabelmd.com/",
     scores: {s1:4, s2:4, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Mar 4, 2:00 PM ET (ср)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 4, 2:00 PM ET (ÑÑ)", price: "", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/kkn-ghnv-mqn",
-    notes: "⭐ 18/25. ВСТРЕЧА ЗАБУКАНА ср 4 марта 2:00 PM ET с Justin Champion (justin.champion@whitelabelmd.com). Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ПРИНЯЛ приглашение. 'We can help' — ответил мгновенно. 100+ founders запустились за 6 мес. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label."
+    notes: "â­ 18/25. ÐÐ¡Ð¢Ð ÐÐ§Ð ÐÐÐÐ£ÐÐÐÐ ÑÑ 4 Ð¼Ð°ÑÑÐ° 2:00 PM ET Ñ Justin Champion (justin.champion@whitelabelmd.com). Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ÐÐ ÐÐÐ¯Ð Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐµÐ½Ð¸Ðµ. 'We can help' â Ð¾ÑÐ²ÐµÑÐ¸Ð» Ð¼Ð³Ð½Ð¾Ð²ÐµÐ½Ð½Ð¾. 100+ founders Ð·Ð°Ð¿ÑÑÑÐ¸Ð»Ð¸ÑÑ Ð·Ð° 6 Ð¼ÐµÑ. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label."
   },
-  // ===== CONTACTED (по баллам — высшие первые) =====
+  // ===== CONTACTED (Ð¿Ð¾ Ð±Ð°Ð»Ð»Ð°Ð¼ â Ð²ÑÑÑÐ¸Ðµ Ð¿ÐµÑÐ²ÑÐµ) =====
   {
     id: 2, name: "OpenLoop Health", url: "https://openloophealth.com", contact: "https://openloophealth.com/contact-sales",
     scores: {s1:5, s2:5, s3:5, s4:5, s5:3},
-    status: "booked", meetingDate: "Mar 2, 3:30 PM ET (пн)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 2, 3:30 PM ET (Ð¿Ð½)", price: "", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/ugz-zbvu-rss",
-    notes: "⭐ TOP FIT 23/25! ВСТРЕЧА ЗАБУКАНА пн 2 марта 3:30-4:00 PM EST. Google Meet: meet.google.com/ugz-zbvu-rss. Контакт: Jordan Narlock (jordan.narlock@openloophealth.com) + Emma Evans (emma.evans@openloophealth.com, Sales Dev Rep). ⚠️ Сразу после Ola Digital Health (2:45-3:30 PM) — плотное расписание! 20k клиницистов. Все 50 штатов. Weight loss, longevity, sexual health. Full white-label. 'Full-stack, white-labeled solutions'."
+    notes: "â­ TOP FIT 23/25! ÐÐ¡Ð¢Ð ÐÐ§Ð ÐÐÐÐ£ÐÐÐÐ Ð¿Ð½ 2 Ð¼Ð°ÑÑÐ° 3:30-4:00 PM EST. Google Meet: meet.google.com/ugz-zbvu-rss. ÐÐ¾Ð½ÑÐ°ÐºÑ: Jordan Narlock (jordan.narlock@openloophealth.com) + Emma Evans (emma.evans@openloophealth.com, Sales Dev Rep). â ï¸ Ð¡ÑÐ°Ð·Ñ Ð¿Ð¾ÑÐ»Ðµ Ola Digital Health (2:45-3:30 PM) â Ð¿Ð»Ð¾ÑÐ½Ð¾Ðµ ÑÐ°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ! 20k ÐºÐ»Ð¸Ð½Ð¸ÑÐ¸ÑÑÐ¾Ð². ÐÑÐµ 50 ÑÑÐ°ÑÐ¾Ð². Weight loss, longevity, sexual health. Full white-label. 'Full-stack, white-labeled solutions'."
   },
   {
     id: 9, name: "MD Integrations", url: "https://mdintegrations.com", contact: "https://mdintegrations.com/faq",
     scores: {s1:5, s2:5, s3:4, s4:5, s5:4},
-    status: "booked", meetingDate: "Mar 3, 2:00 PM ET (вт)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "Mar 3, 2:00 PM ET (Ð²Ñ)", price: "", launch: "", decision: "pending",
     meetingLink: "https://mdintegrations.zoom.us/j/89683357553?pwd=qBQ0s8erdNrSMvdaKZaENkRkOfBQ4H.1",
-    notes: "⭐ PERFECT FIT 23/25! ПРИОРИТЕТ #1! ВСТРЕЧА ЗАБУКАНА вт 3 марта 2:00 PM EST. Zoom: mdintegrations.zoom.us/j/89683357553, Meeting ID: 896 8335 7553, Passcode: 167Mff. Контакт: Alyssa Foxson, MS (a.fox@mdintegrations.com, Inside Sales). Doctor-founded, 50 states, API-first. Её календарь: calendar.app.google/k4wQiF3TBEu7dFBK6."
+    notes: "â­ PERFECT FIT 23/25! ÐÐ ÐÐÐ ÐÐ¢ÐÐ¢ #1! ÐÐ¡Ð¢Ð ÐÐ§Ð ÐÐÐÐ£ÐÐÐÐ Ð²Ñ 3 Ð¼Ð°ÑÑÐ° 2:00 PM EST. Zoom: mdintegrations.zoom.us/j/89683357553, Meeting ID: 896 8335 7553, Passcode: 167Mff. ÐÐ¾Ð½ÑÐ°ÐºÑ: Alyssa Foxson, MS (a.fox@mdintegrations.com, Inside Sales). Doctor-founded, 50 states, API-first. ÐÑ ÐºÐ°Ð»ÐµÐ½Ð´Ð°ÑÑ: calendar.app.google/k4wQiF3TBEu7dFBK6."
   },
   {
     id: 1, name: "SteadyMD", url: "https://steadymd.com", contact: "https://www.steadymd.com/contact/",
     scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "⭐ ОТВЕТ от Lindsey Anderson (VP Enterprise Sales, lindsey@steadymd.com) 26 фев. Просит детали: какие мед. направления, масштаб, текущие/новые пациенты. НУЖНО ОТВЕТИТЬ с описанием TRT/HRT программы. Сотни врачей во всех 50 штатах. Партнёры Amazon Clinic."
+    notes: "â­ ÐÐ¢ÐÐÐ¢ Ð¾Ñ Lindsey Anderson (VP Enterprise Sales, lindsey@steadymd.com) 26 ÑÐµÐ². ÐÑÐ¾ÑÐ¸Ñ Ð´ÐµÑÐ°Ð»Ð¸: ÐºÐ°ÐºÐ¸Ðµ Ð¼ÐµÐ´. Ð½Ð°Ð¿ÑÐ°Ð²Ð»ÐµÐ½Ð¸Ñ, Ð¼Ð°ÑÑÑÐ°Ð±, ÑÐµÐºÑÑÐ¸Ðµ/Ð½Ð¾Ð²ÑÐµ Ð¿Ð°ÑÐ¸ÐµÐ½ÑÑ. ÐÐ£ÐÐÐ ÐÐ¢ÐÐÐ¢ÐÐ¢Ð¬ Ñ Ð¾Ð¿Ð¸ÑÐ°Ð½Ð¸ÐµÐ¼ TRT/HRT Ð¿ÑÐ¾Ð³ÑÐ°Ð¼Ð¼Ñ. Ð¡Ð¾ÑÐ½Ð¸ Ð²ÑÐ°ÑÐµÐ¹ Ð²Ð¾ Ð²ÑÐµÑ 50 ÑÑÐ°ÑÐ°Ñ. ÐÐ°ÑÑÐ½ÑÑÑ Amazon Clinic."
   },
   {
     id: 4, name: "WellSync", url: "https://wellsync.com", contact: "https://wellsync.com/contact/",
     scores: {s1:4, s2:3, s3:4, s4:5, s5:3},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "Форма заполнена, ждёт reCAPTCHA. Telehealth Provider Network. TRT, GLP-1, пептиды в чекбоксах формы. Покрытие штатов уточнить."
+    notes: "Ð¤Ð¾ÑÐ¼Ð° Ð·Ð°Ð¿Ð¾Ð»Ð½ÐµÐ½Ð°, Ð¶Ð´ÑÑ reCAPTCHA. Telehealth Provider Network. TRT, GLP-1, Ð¿ÐµÐ¿ÑÐ¸Ð´Ñ Ð² ÑÐµÐºÐ±Ð¾ÐºÑÐ°Ñ ÑÐ¾ÑÐ¼Ñ. ÐÐ¾ÐºÑÑÑÐ¸Ðµ ÑÑÐ°ÑÐ¾Ð² ÑÑÐ¾ÑÐ½Ð¸ÑÑ."
   },
   {
     id: 5, name: "MyTelemedicine", url: "https://mytelemedicine.com", contact: "sales@mytelemedicine.com",
     scores: {s1:4, s2:4, s3:4, s4:4, s5:3},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "Email отправлен на sales@mytelemedicine.com. JD Power #1 2024. Nationwide clinician network. White-label, DTC-focused."
+    notes: "Email Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½ Ð½Ð° sales@mytelemedicine.com. JD Power #1 2024. Nationwide clinician network. White-label, DTC-focused."
   },
   {
     id: 3, name: "Wheel", url: "https://wheel.com", contact: "https://info.wheel.com/l/1037703/2026-01-30/37bh9",
     scores: {s1:4, s2:5, s3:2, s4:3, s5:2},
     status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
     meetingLink: "",
-    notes: "⚠️ MAYBE — форма заполнена, ждёт reCAPTCHA. $216M funding. Не ясно: BYO-pharmacy (2/5), нет явного фокуса TRT/пептиды (3/5), enterprise-pricing не для $137/мес (2/5). Уточнить на звонке."
+    notes: "â ï¸ MAYBE â ÑÐ¾ÑÐ¼Ð° Ð·Ð°Ð¿Ð¾Ð»Ð½ÐµÐ½Ð°, Ð¶Ð´ÑÑ reCAPTCHA. $216M funding. ÐÐµ ÑÑÐ½Ð¾: BYO-pharmacy (2/5), Ð½ÐµÑ ÑÐ²Ð½Ð¾Ð³Ð¾ ÑÐ¾ÐºÑÑÐ° TRT/Ð¿ÐµÐ¿ÑÐ¸Ð´Ñ (3/5), enterprise-pricing Ð½Ðµ Ð´Ð»Ñ $137/Ð¼ÐµÑ (2/5). Ð£ÑÐ¾ÑÐ½Ð¸ÑÑ Ð½Ð° Ð·Ð²Ð¾Ð½ÐºÐµ."
   },
   {
     id: 16, name: "This American Doc", url: "https://thisamericandoc.com", contact: "https://thisamericandoc.com/companies",
     scores: {s1:4, s2:4, s3:3, s4:2, s5:3},
     status: "rejected", meetingDate: "", price: "", launch: "", decision: "nogo",
     meetingLink: "",
-    notes: "❌ БАУНС — email info@thisamericandoc.com не существует (550 5.1.1 address not found). Email отправлен 26 фев, вернулся. Physician-owned telehealth staffing. 16/25 — был ниже проходного. УБРАТЬ."
+    notes: "â ÐÐÐ£ÐÐ¡ â email info@thisamericandoc.com Ð½Ðµ ÑÑÑÐµÑÑÐ²ÑÐµÑ (550 5.1.1 address not found). Email Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½ 26 ÑÐµÐ², Ð²ÐµÑÐ½ÑÐ»ÑÑ. Physician-owned telehealth staffing. 16/25 â Ð±ÑÐ» Ð½Ð¸Ð¶Ðµ Ð¿ÑÐ¾ÑÐ¾Ð´Ð½Ð¾Ð³Ð¾. Ð£ÐÐ ÐÐ¢Ð¬."
   }
 ];
 
@@ -463,7 +466,7 @@ function setSyncStatus(status, msg) {
   syncStatus = status;
   var el = document.getElementById('sync-indicator');
   if (!el) return;
-  var labels = {idle:'', syncing:'⏳ Сохранение...', synced:'✅ Сохранено в облако', error:'❌ Ошибка: ' + (msg||'')};
+  var labels = {idle:'', syncing:'â³ Ð¡Ð¾ÑÑÐ°Ð½ÐµÐ½Ð¸Ðµ...', synced:'â Ð¡Ð¾ÑÑÐ°Ð½ÐµÐ½Ð¾ Ð² Ð¾Ð±Ð»Ð°ÐºÐ¾', error:'â ÐÑÐ¸Ð±ÐºÐ°: ' + (msg||'')};
   var colors = {idle:'transparent', syncing:'#fbbf24', synced:'#34d399', error:'#f87171'};
   el.textContent = labels[status] || '';
   el.style.color = colors[status] || '#94a3b8';
@@ -547,7 +550,7 @@ async function initApp() {
     console.log('Loaded ' + DATA.length + ' companies from Firestore');
     setSyncStatus('synced');
   } else {
-    console.log('Firestore empty — seeding with SEED_DATA...');
+    console.log('Firestore empty â seeding with SEED_DATA...');
     DATA = SEED_DATA.slice();
     await seedFirestore();
   }
@@ -566,19 +569,19 @@ function renderStats() {
   var activeTasks = DATA.filter(c => c.nextTask && !c.taskDone).length;
   var overdueTasks = DATA.filter(c => { if (!c.nextTask || c.taskDone) return false; var d = parseTaskDeadline(c.taskDeadline); var now = new Date(); now.setHours(0,0,0,0); return d && d < now; }).length;
   var taskColor = overdueTasks > 0 ? 'red' : activeTasks > 0 ? 'amber' : 'green';
-  var taskLabel = overdueTasks > 0 ? activeTasks + ' (⚠️' + overdueTasks + ' просрочено)' : activeTasks;
+  var taskLabel = overdueTasks > 0 ? activeTasks + ' (â ï¸' + overdueTasks + ' Ð¿ÑÐ¾ÑÑÐ¾ÑÐµÐ½Ð¾)' : activeTasks;
   document.getElementById('stats-bar').innerHTML = `
-    <div class="stat-card"><div class="label">Всего компаний</div><div class="value blue">${total}</div></div>
-    <div class="stat-card"><div class="label">Квалифицированных (≥18)</div><div class="value green">${qualified}</div></div>
-    <div class="stat-card"><div class="label">Встреч забукано</div><div class="value amber">${booked}</div></div>
-    <div class="stat-card"><div class="label">Встреч проведено</div><div class="value red">${done}</div></div>
-    <div class="stat-card"><div class="label">🔥 Активных задач</div><div class="value ${taskColor}">${taskLabel}</div></div>
+    <div class="stat-card"><div class="label">ÐÑÐµÐ³Ð¾ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ð¹</div><div class="value blue">${total}</div></div>
+    <div class="stat-card"><div class="label">ÐÐ²Ð°Ð»Ð¸ÑÐ¸ÑÐ¸ÑÐ¾Ð²Ð°Ð½Ð½ÑÑ (â¥18)</div><div class="value green">${qualified}</div></div>
+    <div class="stat-card"><div class="label">ÐÑÑÑÐµÑ Ð·Ð°Ð±ÑÐºÐ°Ð½Ð¾</div><div class="value amber">${booked}</div></div>
+    <div class="stat-card"><div class="label">ÐÑÑÑÐµÑ Ð¿ÑÐ¾Ð²ÐµÐ´ÐµÐ½Ð¾</div><div class="value red">${done}</div></div>
+    <div class="stat-card"><div class="label">ð¥ ÐÐºÑÐ¸Ð²Ð½ÑÑ Ð·Ð°Ð´Ð°Ñ</div><div class="value ${taskColor}">${taskLabel}</div></div>
   `;
 }
 
 function parseMeetingDate(str) {
   if (!str) return null;
-  // Format: "Feb 27, 1:30 PM ET (пт)" or "Mar 2, 3:30 PM ET (пн)"
+  // Format: "Feb 27, 1:30 PM ET (Ð¿Ñ)" or "Mar 2, 3:30 PM ET (Ð¿Ð½)"
   var m = str.match(/^(\w+)\s+(\d+),?\s+(\d+):(\d+)\s+(AM|PM)/i);
   if (!m) return null;
   var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
@@ -643,7 +646,7 @@ function parseTaskDeadline(str) {
 }
 
 function renderTaskCell(c) {
-  if (!c.nextTask) return '<span class="task-none">—</span>';
+  if (!c.nextTask) return '<span class="task-none">â</span>';
   var taskDone = c.taskDone === true;
   var deadline = parseTaskDeadline(c.taskDeadline);
   var now = new Date();
@@ -655,21 +658,21 @@ function renderTaskCell(c) {
   var deadlineLabel = '';
   if (deadline) {
     if (taskDone) { deadlineClass = 'normal'; deadlineLabel = c.taskDeadline; }
-    else if (isOverdue) { deadlineClass = 'urgent'; deadlineLabel = '⚠️ Просрочено! ' + c.taskDeadline; }
-    else if (diffDays === 0) { deadlineClass = 'urgent'; deadlineLabel = '🔴 Сегодня!'; }
-    else if (diffDays === 1) { deadlineClass = 'soon'; deadlineLabel = '🟡 Завтра'; }
-    else if (diffDays <= 3) { deadlineClass = 'soon'; deadlineLabel = '📅 ' + c.taskDeadline; }
-    else { deadlineClass = 'normal'; deadlineLabel = '📅 ' + c.taskDeadline; }
+    else if (isOverdue) { deadlineClass = 'urgent'; deadlineLabel = 'â ï¸ ÐÑÐ¾ÑÑÐ¾ÑÐµÐ½Ð¾! ' + c.taskDeadline; }
+    else if (diffDays === 0) { deadlineClass = 'urgent'; deadlineLabel = 'ð´ Ð¡ÐµÐ³Ð¾Ð´Ð½Ñ!'; }
+    else if (diffDays === 1) { deadlineClass = 'soon'; deadlineLabel = 'ð¡ ÐÐ°Ð²ÑÑÐ°'; }
+    else if (diffDays <= 3) { deadlineClass = 'soon'; deadlineLabel = 'ð ' + c.taskDeadline; }
+    else { deadlineClass = 'normal'; deadlineLabel = 'ð ' + c.taskDeadline; }
   }
   var checkbox = taskDone
-    ? '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отменить выполнение">☑️</span>'
-    : '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отметить выполненной">⬜</span>';
+    ? '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="ÐÑÐ¼ÐµÐ½Ð¸ÑÑ Ð²ÑÐ¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ">âï¸</span>'
+    : '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="ÐÑÐ¼ÐµÑÐ¸ÑÑ Ð²ÑÐ¿Ð¾Ð»Ð½ÐµÐ½Ð½Ð¾Ð¹">â¬</span>';
   return '<div class="task-badge '+badgeClass+'" style="cursor:pointer" onclick="editRow('+c.id+')">'
     + checkbox
     + '<div>'
     + '<span class="task-text" title="'+c.nextTask.replace(/"/g,'&quot;')+'">'+c.nextTask+'</span>'
     + (deadlineLabel ? '<div class="task-deadline '+deadlineClass+'">'+deadlineLabel+'</div>' : '')
-    + (c.taskResponsible ? '<div class="task-responsible">👤 '+c.taskResponsible+'</div>' : '')
+    + (c.taskResponsible ? '<div class="task-responsible">ð¤ '+c.taskResponsible+'</div>' : '')
     + '</div></div>';
 }
 
@@ -685,27 +688,27 @@ async function toggleTask(id) {
 function renderContactsPanel(c) {
   var html = '';
   if (c.contactName || c.contactEmail || c.contactPhone) {
-    html += '<div style="margin-bottom:6px"><strong>👤 ' + (c.contactName||'—') + '</strong>';
+    html += '<div style="margin-bottom:6px"><strong>ð¤ ' + (c.contactName||'â') + '</strong>';
     if (c.contactRole) html += ' <span style="color:#64748b;font-size:10px">(' + c.contactRole + ')</span>';
     html += '</div>';
-    if (c.contactEmail) html += '<div style="font-size:11px">📧 <a href="mailto:'+c.contactEmail+'" style="color:#38bdf8">'+c.contactEmail+'</a></div>';
-    if (c.contactPhone) html += '<div style="font-size:11px">📱 '+c.contactPhone+'</div>';
+    if (c.contactEmail) html += '<div style="font-size:11px">ð§ <a href="mailto:'+c.contactEmail+'" style="color:#38bdf8">'+c.contactEmail+'</a></div>';
+    if (c.contactPhone) html += '<div style="font-size:11px">ð± '+c.contactPhone+'</div>';
   }
   if (c.pros && c.pros.length) {
-    html += '<h4 style="color:#34d399;margin-top:8px">💪 Сильные стороны</h4><ul style="margin:4px 0 4px 16px">';
+    html += '<h4 style="color:#34d399;margin-top:8px">ðª Ð¡Ð¸Ð»ÑÐ½ÑÐµ ÑÑÐ¾ÑÐ¾Ð½Ñ</h4><ul style="margin:4px 0 4px 16px">';
     c.pros.forEach(function(p){ html += '<li style="color:#34d399;font-size:11px">'+p+'</li>'; });
     html += '</ul>';
   }
   if (c.cons && c.cons.length) {
-    html += '<h4 style="color:#f87171;margin-top:8px">⚠️ Слабые стороны</h4><ul style="margin:4px 0 4px 16px">';
+    html += '<h4 style="color:#f87171;margin-top:8px">â ï¸ Ð¡Ð»Ð°Ð±ÑÐµ ÑÑÐ¾ÑÐ¾Ð½Ñ</h4><ul style="margin:4px 0 4px 16px">';
     c.cons.forEach(function(p){ html += '<li style="color:#f87171;font-size:11px">'+p+'</li>'; });
     html += '</ul>';
   }
   if (c.checklist && c.checklist.length) {
-    html += '<h4 style="color:#fbbf24;margin-top:8px">❓ Чеклист</h4>';
+    html += '<h4 style="color:#fbbf24;margin-top:8px">â Ð§ÐµÐºÐ»Ð¸ÑÑ</h4>';
     c.checklist.forEach(function(q, qi){
       html += '<div style="font-size:11px;margin:2px 0;cursor:pointer" onclick="toggleChecklist('+c.id+','+qi+')">';
-      html += q.done ? '☑️ <span style="text-decoration:line-through;color:#64748b">'+q.text+'</span>' : '⬜ '+q.text;
+      html += q.done ? 'âï¸ <span style="text-decoration:line-through;color:#64748b">'+q.text+'</span>' : 'â¬ '+q.text;
       html += '</div>';
     });
   }
@@ -734,8 +737,8 @@ function toggleMeetingsLog(id) {
 function renderMeetingsLogInline(c) {
   var logs = c.meetingsLog || [];
   if (!logs.length) return '';
-  var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
-  var html = '<h4 style="color:#38bdf8;margin-bottom:6px">📝 История встреч</h4>';
+  var typeLabels = {first:'ÐÐµÑÐ²Ð¸ÑÐ½Ð°Ñ',followup:'Follow-up',demo:'ÐÐµÐ¼Ð¾',call:'ÐÐ²Ð¾Ð½Ð¾Ðº',email:'Email'};
+  var html = '<h4 style="color:#38bdf8;margin-bottom:6px">ð ÐÑÑÐ¾ÑÐ¸Ñ Ð²ÑÑÑÐµÑ</h4>';
   logs.forEach(function(log) {
     html += '<div style="border-left:2px solid #334155;padding-left:8px;margin-bottom:8px">'
       + '<div style="font-size:11px"><strong style="color:#38bdf8">' + log.date + '</strong> '
@@ -768,16 +771,16 @@ function renderTable() {
     var meetBadge = '';
     if (meetDate) {
       var diffH = (meetDate - now) / 3600000;
-      if (diffH > 0 && diffH <= 24) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СЕГОДНЯ</span>'; }
-      else if (diffH > 24 && diffH <= 48) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ЗАВТРА</span>'; }
-      else if (diffH > 0 && diffH <= 168) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СКОРО</span>'; }
+      if (diffH > 0 && diffH <= 24) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">Ð¡ÐÐÐÐÐÐ¯</span>'; }
+      else if (diffH > 24 && diffH <= 48) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ÐÐÐÐ¢Ð Ð</span>'; }
+      else if (diffH > 0 && diffH <= 168) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">Ð¡ÐÐÐ Ð</span>'; }
     }
-    var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'✅ Проведена',rejected:'Не подходит'};
-    var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
+    var statusLabels = {none:'ÐÐµ Ð½Ð°ÑÐ°Ñ',contacted:'Ð¤Ð¾ÑÐ¼Ð°/Email',booked:'ÐÐ°Ð±ÑÐºÐ°Ð½Ð°',done:'â ÐÑÐ¾Ð²ÐµÐ´ÐµÐ½Ð°',rejected:'ÐÐµ Ð¿Ð¾Ð´ÑÐ¾Ð´Ð¸Ñ'};
+    var decLabels = {pending:'â³', go:'â GO', nogo:'â NO-GO'};
     var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
     html += `<tr data-id="${c.id}" style="${rowBorder}${urgentStyle}">
       <td style="color:#475569">${i+1}</td>
-      <td><div class="company-name">${c.name}${topBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div></td>
+      <td><div class="company-name">${c.name}${topBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div>${c.emailThreads && c.emailThreads.length > 0 ? '<div class="email-link"><a href="' + c.emailThreads[0].url + '" target="_blank">\u2709\uFE0F ' + c.emailThreads[0].label + '</a></div>' : ''}</td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s2}">${c.scores.s2}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s3}">${c.scores.s3}</span></td>
@@ -785,20 +788,20 @@ function renderTable() {
       <td class="score-cell"><span class="score-badge score-${c.scores.s5}">${c.scores.s5}</span></td>
       <td class="total-score ${tClass}">${t}/25</td>
       <td><span class="status-badge status-${c.status}">${statusLabels[c.status]||c.status}</span></td>
-      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.status === 'done' || c.status === 'rejected' ? '' : (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '<br><span style="color:#475569;font-size:10px;cursor:pointer" onclick="editRow('+c.id+')">+ добавить ссылку</span>')) : '—'}</td>
-      <td style="font-size:12px">${c.price||'—'}</td>
-      <td style="font-size:12px">${c.launch||'—'}</td>
+      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.status === 'done' || c.status === 'rejected' ? '' : (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">ð ÐÐ¾Ð´ÐºÐ»ÑÑÐ¸ÑÑÑÑ</a>' : '<br><span style="color:#475569;font-size:10px;cursor:pointer" onclick="editRow('+c.id+')">+ Ð´Ð¾Ð±Ð°Ð²Ð¸ÑÑ ÑÑÑÐ»ÐºÑ</span>')) : 'â'}</td>
+      <td style="font-size:12px">${c.price||'â'}</td>
+      <td style="font-size:12px">${c.launch||'â'}</td>
       <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
       <td>${renderTaskCell(c)}</td>
       <td class="notes-cell">
-        <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
-        ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
-        ${(c.contactName || (c.pros && c.pros.length) || (c.checklist && c.checklist.length)) ? '<span class="summary-toggle" onclick="toggleContacts('+c.id+')">👥 Контакты/Инфо</span><div class="summary-panel" id="contacts-'+c.id+'">'+renderContactsPanel(c)+'</div>' : ''}
-        ${(c.meetingsLog && c.meetingsLog.length) ? '<span class="summary-toggle" onclick="toggleMeetingsLog('+c.id+')">📝 Встречи ('+c.meetingsLog.length+')</span><div class="summary-panel" id="meetingslog-'+c.id+'">'+renderMeetingsLogInline(c)+'</div>' : ''}
+        <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'ÐÐ°Ð¶Ð¼Ð¸ Ð´Ð»Ñ ÑÐµÐ´.'}</span>
+        ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">ð ÐÑÐ¾Ð³Ð¸ Ð²ÑÑÑÐµÑÐ¸</span><div class="summary-panel" id="summary-'+c.id+'"><h4>ÐÐµÑÐ´Ð¸ÐºÑ</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Ð¦ÐµÐ½Ñ</h4>'+c.meetingSummary.pricing+'<h4>ÐÐ¾Ð½ÑÐ°ÐºÑÑ</h4>'+c.meetingSummary.keyContacts+'<h4>ÐÐ°ÑÑÐ½ÑÑÑ</h4>'+c.meetingSummary.partners+'<h4>Ð¡Ð»ÐµÐ´ÑÑÑÐ¸Ðµ ÑÐ°Ð³Ð¸</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
+        ${(c.contactName || (c.pros && c.pros.length) || (c.checklist && c.checklist.length)) ? '<span class="summary-toggle" onclick="toggleContacts('+c.id+')">ð¥ ÐÐ¾Ð½ÑÐ°ÐºÑÑ/ÐÐ½ÑÐ¾</span><div class="summary-panel" id="contacts-'+c.id+'">'+renderContactsPanel(c)+'</div>' : ''}
+        ${(c.meetingsLog && c.meetingsLog.length) ? '<span class="summary-toggle" onclick="toggleMeetingsLog('+c.id+')">ð ÐÑÑÑÐµÑÐ¸ ('+c.meetingsLog.length+')</span><div class="summary-panel" id="meetingslog-'+c.id+'">'+renderMeetingsLogInline(c)+'</div>' : ''}
       </td>
       <td><div class="row-actions">
-        <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
-        <button class="row-btn" onclick="deleteRow(${c.id})" title="Удалить">🗑️</button>
+        <button class="row-btn" onclick="editRow(${c.id})" title="Ð ÐµÐ´Ð°ÐºÑÐ¸ÑÐ¾Ð²Ð°ÑÑ">âï¸</button>
+        <button class="row-btn" onclick="deleteRow(${c.id})" title="Ð£Ð´Ð°Ð»Ð¸ÑÑ">ðï¸</button>
       </div></td>
     </tr>`;
   });
@@ -816,7 +819,7 @@ function editRow(id) {
   editingId = id;
   var c = DATA.find(x => x.id === id);
   if (!c) return;
-  document.getElementById('modal-title').textContent = 'Редактировать: ' + c.name;
+  document.getElementById('modal-title').textContent = 'Ð ÐµÐ´Ð°ÐºÑÐ¸ÑÐ¾Ð²Ð°ÑÑ: ' + c.name;
   document.getElementById('m-name').value = c.name;
   document.getElementById('m-url').value = c.url;
   document.getElementById('m-contact').value = c.contact || '';
@@ -849,13 +852,13 @@ function editRow(id) {
 
 function addCompany() {
   editingId = null;
-  document.getElementById('modal-title').textContent = 'Добавить компанию';
+  document.getElementById('modal-title').textContent = 'ÐÐ¾Ð±Ð°Ð²Ð¸ÑÑ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ';
   ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes','m-next-task','m-task-deadline','m-task-responsible','m-contact-name','m-contact-email','m-contact-phone','m-contact-role','m-pros','m-pros-cons','m-checklist'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('m-task-done').checked = false;
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
   document.getElementById('m-decision').value = 'pending';
-  document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
+  document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð·Ð°Ð¿Ð¸ÑÐµÐ¹ Ð¾ Ð²ÑÑÑÐµÑÐ°Ñ</div>';
   document.getElementById('edit-modal').classList.add('show');
 }
 
@@ -914,7 +917,7 @@ async function saveModal() {
 }
 
 async function deleteRow(id) {
-  if (!confirm('Удалить эту компанию?')) return;
+  if (!confirm('Ð£Ð´Ð°Ð»Ð¸ÑÑ ÑÑÑ ÐºÐ¾Ð¼Ð¿Ð°Ð½Ð¸Ñ?')) return;
   DATA = DATA.filter(x => x.id !== id);
   renderAll();
   // Sync delete to Firestore
@@ -932,16 +935,16 @@ function renderMeetingsLog() {
   var logs = (c && c.meetingsLog) || [];
   var html = '';
   if (logs.length === 0) {
-    html = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
+    html = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">ÐÐ¾ÐºÐ° Ð½ÐµÑ Ð·Ð°Ð¿Ð¸ÑÐµÐ¹ Ð¾ Ð²ÑÑÑÐµÑÐ°Ñ</div>';
   } else {
-    var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
+    var typeLabels = {first:'ÐÐµÑÐ²Ð¸ÑÐ½Ð°Ñ',followup:'Follow-up',demo:'ÐÐµÐ¼Ð¾',call:'ÐÐ²Ð¾Ð½Ð¾Ðº',email:'Email'};
     logs.forEach(function(log, i) {
       var typeClass = log.type === 'first' ? 'log-type-first' : log.type === 'followup' ? 'log-type-followup' : log.type === 'demo' ? 'log-type-demo' : '';
       html += '<div class="meeting-log-entry">'
-        + '<div><span class="log-date">📅 ' + log.date + '</span>'
+        + '<div><span class="log-date">ð ' + log.date + '</span>'
         + '<span class="log-type ' + typeClass + '">' + (typeLabels[log.type] || log.type) + '</span></div>'
         + '<div class="log-summary">' + log.summary + '</div>'
-        + '<button class="log-delete" onclick="deleteMeetingLog(' + i + ')" title="Удалить">✕</button>'
+        + '<button class="log-delete" onclick="deleteMeetingLog(' + i + ')" title="Ð£Ð´Ð°Ð»Ð¸ÑÑ">â</button>'
         + '</div>';
     });
   }
@@ -952,7 +955,7 @@ function addMeetingLog() {
   var date = document.getElementById('m-meeting-log-date').value.trim();
   var type = document.getElementById('m-meeting-log-type').value;
   var summary = document.getElementById('m-meeting-log-summary').value.trim();
-  if (!date || !summary) { alert('Укажите дату и краткое содержание встречи'); return; }
+  if (!date || !summary) { alert('Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð´Ð°ÑÑ Ð¸ ÐºÑÐ°ÑÐºÐ¾Ðµ ÑÐ¾Ð´ÐµÑÐ¶Ð°Ð½Ð¸Ðµ Ð²ÑÑÑÐµÑÐ¸'); return; }
   var c = DATA.find(x => x.id === editingId);
   if (!c) return;
   if (!c.meetingsLog) c.meetingsLog = [];
@@ -963,7 +966,7 @@ function addMeetingLog() {
 }
 
 async function deleteMeetingLog(idx) {
-  if (!confirm('Удалить эту запись?')) return;
+  if (!confirm('Ð£Ð´Ð°Ð»Ð¸ÑÑ ÑÑÑ Ð·Ð°Ð¿Ð¸ÑÑ?')) return;
   var c = DATA.find(x => x.id === editingId);
   if (c && c.meetingsLog) {
     c.meetingsLog.splice(idx, 1);
@@ -983,7 +986,7 @@ function saveFile() {
   a.download = 'AVG_Telehealth_Tracker.html';
   a.click();
   URL.revokeObjectURL(a.href);
-  alert('Файл сохранён как бэкап! Основные данные хранятся в Firebase.');
+  alert('Ð¤Ð°Ð¹Ð» ÑÐ¾ÑÑÐ°Ð½ÑÐ½ ÐºÐ°Ðº Ð±ÑÐºÐ°Ð¿! ÐÑÐ½Ð¾Ð²Ð½ÑÐµ Ð´Ð°Ð½Ð½ÑÐµ ÑÑÐ°Ð½ÑÑÑÑ Ð² Firebase.');
 }
 
 // Close modal on outside click
