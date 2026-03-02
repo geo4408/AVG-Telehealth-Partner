@@ -56,6 +56,7 @@ tbody td { padding: 10px 12px; vertical-align: middle; }
 .contacts-inline a { color: #a78bfa; text-decoration: none; }
 .contacts-inline a:hover { text-decoration: underline; }
 .contacts-inline .contact-phone { color: #38bdf8; }
+    .contacts-inline .contact-email { color: #34d399; font-size: 9px; }
 .email-link { margin-top: 3px; }
     .email-link a { color: #a78bfa; font-size: 11px; text-decoration: none; }
     .email-link a:hover { text-decoration: underline; color: #c4b5fd; }
@@ -792,6 +793,7 @@ function renderTable() {
       c.contacts.forEach(function(ct) {
         contactsHtml += '<span>' + ct.name;
         if (ct.phone) contactsHtml += ' <a class="contact-phone" href="tel:' + ct.phone + '">' + ct.phone + '</a>';
+        if (ct.email) contactsHtml += ' <a class="contact-email" href="mailto:' + ct.email + '">' + ct.email + '</a>';
         contactsHtml += '</span> ';
       });
       contactsHtml += '</div>';
