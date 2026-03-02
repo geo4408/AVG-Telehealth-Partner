@@ -45,7 +45,18 @@ tbody td { padding: 10px 12px; vertical-align: middle; }
 .company-name { font-weight: 600; color: #f1f5f9; }
 .company-url { font-size: 11px; color: #64748b; }
 .company-url a { color: #38bdf8; text-decoration: none; }
-    .email-link { margin-top: 3px; }
+    .favorability-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+.fav-5 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; animation: pulse-glow 2s infinite; }
+.fav-4 { background: #22c55e; color: #fff; }
+.fav-3 { background: #3b82f6; color: #fff; }
+.fav-2 { background: #6b7280; color: #fff; }
+.fav-1 { background: #374151; color: #9ca3af; }
+@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 4px rgba(251,191,36,0.4); } 50% { box-shadow: 0 0 12px rgba(251,191,36,0.8); } }
+.contacts-inline { margin-top: 4px; font-size: 10px; color: #9ca3af; }
+.contacts-inline a { color: #a78bfa; text-decoration: none; }
+.contacts-inline a:hover { text-decoration: underline; }
+.contacts-inline .contact-phone { color: #38bdf8; }
+.email-link { margin-top: 3px; }
     .email-link a { color: #a78bfa; font-size: 11px; text-decoration: none; }
     .email-link a:hover { text-decoration: underline; color: #c4b5fd; }
 
@@ -258,6 +269,15 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
         <option value="pending">Ожидание</option>
         <option value="go">GO ✓</option>
         <option value="nogo">NO-GO ✗</option>
+      </select>
+      <label>⭐ Наш рейтинг (Favorability)</label>
+      <select id="m-favorability">
+        <option value="0">-- Не оценено --</option>
+        <option value="1">1 - Не подходит</option>
+        <option value="2">2 - Слабо</option>
+        <option value="3">3 - Нормально</option>
+        <option value="4">4 - Хорошо</option>
+        <option value="5">5 - TOP PICK ⭐</option>
       </select>
       <label>Заметки</label>
       <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
@@ -763,6 +783,19 @@ function renderTable() {
     var t = getTotal(c);
     var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
     var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
+    var favLevel = c.favorability || 0;
+    var favLabels = ['','','','','TOP PICK','TOP PICK'];
+    var favBadge = favLevel >= 4 ? '<span class="favorability-badge fav-' + favLevel + '">' + (favLevel === 5 ? '\u2B50 ' : '') + favLabels[favLevel] + '</span>' : (favLevel === 3 ? '<span class="favorability-badge fav-3">STRONG</span>' : '');
+    var contactsHtml = '';
+    if (c.contacts && c.contacts.length > 0) {
+      contactsHtml = '<div class="contacts-inline">';
+      c.contacts.forEach(function(ct) {
+        contactsHtml += '<span>' + ct.name;
+        if (ct.phone) contactsHtml += ' <a class="contact-phone" href="tel:' + ct.phone + '">' + ct.phone + '</a>';
+        contactsHtml += '</span> ';
+      });
+      contactsHtml += '</div>';
+    }
     var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
     // Highlight upcoming meetings
     var meetDate = parseMeetingDate(c.meetingDate);
@@ -780,7 +813,7 @@ function renderTable() {
     var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
     html += `<tr data-id="${c.id}" style="${rowBorder}${urgentStyle}">
       <td style="color:#475569">${i+1}</td>
-      <td><div class="company-name">${c.name}${topBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div>${c.emailThreads && c.emailThreads.length > 0 ? '<div class="email-link"><a href="' + c.emailThreads[0].url + '" target="_blank">\u2709\uFE0F ' + c.emailThreads[0].label + '</a></div>' : ''}</td>
+      <td><div class="company-name">${c.name}${topBadge}${favBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div>${c.emailThreads && c.emailThreads.length > 0 ? '<div class="email-link"><a href="' + c.emailThreads[0].url + '" target="_blank">\u2709\uFE0F ' + c.emailThreads[0].label + '</a></div>' : ''} + contactsHtml</td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s2}">${c.scores.s2}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s3}">${c.scores.s3}</span></td>
@@ -834,6 +867,7 @@ function editRow(id) {
   document.getElementById('m-price').value = c.price || '';
   document.getElementById('m-launch').value = c.launch || '';
   document.getElementById('m-decision').value = c.decision || 'pending';
+    document.getElementById('m-favorability').value = c.favorability || 0;
   document.getElementById('m-notes').value = c.notes || '';
   document.getElementById('m-next-task').value = c.nextTask || '';
   document.getElementById('m-task-deadline').value = c.taskDeadline || '';
@@ -858,6 +892,7 @@ function addCompany() {
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
   document.getElementById('m-decision').value = 'pending';
+    c.favorability = parseInt(document.getElementById('m-favorability').value) || 0;
   document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
   document.getElementById('edit-modal').classList.add('show');
 }
