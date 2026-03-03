@@ -45,21 +45,6 @@ tbody td { padding: 10px 12px; vertical-align: middle; }
 .company-name { font-weight: 600; color: #f1f5f9; }
 .company-url { font-size: 11px; color: #64748b; }
 .company-url a { color: #38bdf8; text-decoration: none; }
-    .favorability-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
-.fav-5 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; animation: pulse-glow 2s infinite; }
-.fav-4 { background: #22c55e; color: #fff; }
-.fav-3 { background: #3b82f6; color: #fff; }
-.fav-2 { background: #6b7280; color: #fff; }
-.fav-1 { background: #374151; color: #9ca3af; }
-@keyframes pulse-glow { 0%,100% { box-shadow: 0 0 4px rgba(251,191,36,0.4); } 50% { box-shadow: 0 0 12px rgba(251,191,36,0.8); } }
-.contacts-inline { margin-top: 4px; font-size: 10px; color: #9ca3af; }
-.contacts-inline a { color: #a78bfa; text-decoration: none; }
-.contacts-inline a:hover { text-decoration: underline; }
-.contacts-inline .contact-phone { color: #38bdf8; }
-    .contacts-inline .contact-email { color: #34d399; font-size: 9px; }
-.email-link { margin-top: 3px; }
-    .email-link a { color: #a78bfa; font-size: 11px; text-decoration: none; }
-    .email-link a:hover { text-decoration: underline; color: #c4b5fd; }
 
 .score-cell { text-align: center; }
 .score-badge { display: inline-block; width: 28px; height: 28px; border-radius: 6px; line-height: 28px; text-align: center; font-weight: 700; font-size: 12px; }
@@ -168,6 +153,16 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
 
 .checklist-item { font-size: 11px; margin: 2px 0; cursor: pointer; }
 .checklist-panel { margin-top: 8px; }
+
+.risk-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
+.risk-dot-green { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
+.risk-dot-yellow { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.5); }
+.risk-dot-red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+.risk-dot-none { background: #475569; }
+.risk-label { font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+.risk-label-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+.risk-label-yellow { background: rgba(234,179,8,0.15); color: #eab308; }
+.risk-label-red { background: rgba(239,68,68,0.15); color: #ef4444; }
 </style>
 </head>
 <body>
@@ -199,6 +194,10 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
   <button class="filter-btn" onclick="setFilter('booked')">Встреча забукана</button>
   <button class="filter-btn" onclick="setFilter('done')">Встреча проведена</button>
   <button class="filter-btn" onclick="setFilter('tasks')">🔥 Активные задачи</button>
+  <span style="color:#334155;margin:0 4px">|</span>
+  <button class="filter-btn" onclick="setFilter('risk-red')">🔴 Высокий риск</button>
+  <button class="filter-btn" onclick="setFilter('risk-green')">🟢 Низкий риск</button>
+  <button class="filter-btn" onclick="setFilter('risk-none')">⚪ Не проверены</button>
 </div>
 
 <div class="table-wrap">
@@ -255,6 +254,14 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
       <option value="rejected">Не подходит</option>
     </select>
 
+    <label>Уровень риска (по результатам анализа)</label>
+    <select id="m-risk-level">
+      <option value="none">⚪ Не проверена</option>
+      <option value="green">🟢 Низкий риск</option>
+      <option value="yellow">🟡 Средний риск</option>
+      <option value="red">🔴 Высокий риск</option>
+    </select>
+
     <div class="meeting-section">
       <h3>После встречи</h3>
       <label>Дата/время встречи</label>
@@ -270,15 +277,6 @@ select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e
         <option value="pending">Ожидание</option>
         <option value="go">GO ✓</option>
         <option value="nogo">NO-GO ✗</option>
-      </select>
-      <label>⭐ Наш рейтинг (Favorability)</label>
-      <select id="m-favorability">
-        <option value="0">-- Не оценено --</option>
-        <option value="1">1 - Не подходит</option>
-        <option value="2">2 - Слабо</option>
-        <option value="3">3 - Нормально</option>
-        <option value="4">4 - Хорошо</option>
-        <option value="5">5 - TOP PICK ⭐</option>
       </select>
       <label>Заметки</label>
       <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
@@ -591,11 +589,17 @@ function renderStats() {
   var overdueTasks = DATA.filter(c => { if (!c.nextTask || c.taskDone) return false; var d = parseTaskDeadline(c.taskDeadline); var now = new Date(); now.setHours(0,0,0,0); return d && d < now; }).length;
   var taskColor = overdueTasks > 0 ? 'red' : activeTasks > 0 ? 'amber' : 'green';
   var taskLabel = overdueTasks > 0 ? activeTasks + ' (⚠️' + overdueTasks + ' просрочено)' : activeTasks;
+  var riskGreen = DATA.filter(c => c.riskLevel === 'green').length;
+  var riskYellow = DATA.filter(c => c.riskLevel === 'yellow').length;
+  var riskRed = DATA.filter(c => c.riskLevel === 'red').length;
+  var riskNone = DATA.filter(c => !c.riskLevel || c.riskLevel === 'none').length;
+  var riskHtml = '<span style="color:#22c55e;font-weight:700">🟢 ' + riskGreen + '</span> · <span style="color:#eab308;font-weight:700">🟡 ' + riskYellow + '</span> · <span style="color:#ef4444;font-weight:700">🔴 ' + riskRed + '</span> · <span style="color:#64748b">⚪ ' + riskNone + '</span>';
   document.getElementById('stats-bar').innerHTML = `
     <div class="stat-card"><div class="label">Всего компаний</div><div class="value blue">${total}</div></div>
     <div class="stat-card"><div class="label">Квалифицированных (≥18)</div><div class="value green">${qualified}</div></div>
     <div class="stat-card"><div class="label">Встреч забукано</div><div class="value amber">${booked}</div></div>
     <div class="stat-card"><div class="label">Встреч проведено</div><div class="value red">${done}</div></div>
+    <div class="stat-card"><div class="label">🔍 Анализ рисков</div><div class="value" style="font-size:16px">${riskHtml}</div></div>
     <div class="stat-card"><div class="label">🔥 Активных задач</div><div class="value ${taskColor}">${taskLabel}</div></div>
   `;
 }
@@ -776,6 +780,9 @@ function renderTable() {
   else if (currentFilter === 'booked') filtered = DATA.filter(c => c.status === 'booked');
   else if (currentFilter === 'done') filtered = DATA.filter(c => c.status === 'done');
   else if (currentFilter === 'tasks') filtered = DATA.filter(c => c.nextTask && !c.taskDone);
+  else if (currentFilter === 'risk-red') filtered = DATA.filter(c => c.riskLevel === 'red');
+  else if (currentFilter === 'risk-green') filtered = DATA.filter(c => c.riskLevel === 'green');
+  else if (currentFilter === 'risk-none') filtered = DATA.filter(c => !c.riskLevel || c.riskLevel === 'none');
 
   filtered = smartSort(filtered);
 
@@ -784,20 +791,6 @@ function renderTable() {
     var t = getTotal(c);
     var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
     var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
-    var favLevel = c.favorability || 0;
-    var favLabels = ['','','','','TOP PICK','TOP PICK'];
-    var favBadge = favLevel >= 4 ? '<span class="favorability-badge fav-' + favLevel + '">' + (favLevel === 5 ? '\u2B50 ' : '') + favLabels[favLevel] + '</span>' : (favLevel === 3 ? '<span class="favorability-badge fav-3">STRONG</span>' : '');
-    var contactsHtml = '';
-    if (c.contacts && c.contacts.length > 0) {
-      contactsHtml = '<div class="contacts-inline">';
-      c.contacts.forEach(function(ct) {
-        contactsHtml += '<span>' + ct.name;
-        if (ct.phone) contactsHtml += ' <a class="contact-phone" href="tel:' + ct.phone + '">' + ct.phone + '</a>';
-        if (ct.email) contactsHtml += ' <a class="contact-email" href="mailto:' + ct.email + '">' + ct.email + '</a>';
-        contactsHtml += '</span> ';
-      });
-      contactsHtml += '</div>';
-    }
     var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
     // Highlight upcoming meetings
     var meetDate = parseMeetingDate(c.meetingDate);
@@ -805,20 +798,17 @@ function renderTable() {
     var urgentStyle = '';
     var meetBadge = '';
     if (meetDate) {
-      var nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      var meetDay = new Date(meetDate.getFullYear(), meetDate.getMonth(), meetDate.getDate());
-      var diffDays = Math.round((meetDay - nowDay) / 86400000);
-      if (diffDays === 0) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СЕГОДНЯ</span>'; }
-      else if (diffDays === 1) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ЗАВТРА</span>'; }
-      else if (diffDays >= 2 && diffDays <= 7) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СКОРО</span>'; }
-      else if (diffDays < 0 && c.status !== 'done') { meetBadge = '<span style="background:#ef4444;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ПРОПУЩЕНО</span>'; }
+      var diffH = (meetDate - now) / 3600000;
+      if (diffH > 0 && diffH <= 24) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СЕГОДНЯ</span>'; }
+      else if (diffH > 24 && diffH <= 48) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ЗАВТРА</span>'; }
+      else if (diffH > 0 && diffH <= 168) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СКОРО</span>'; }
     }
     var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'✅ Проведена',rejected:'Не подходит'};
     var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
     var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
     html += `<tr data-id="${c.id}" style="${rowBorder}${urgentStyle}">
       <td style="color:#475569">${i+1}</td>
-      <td><div class="company-name">${c.name}${topBadge}${favBadge}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div>${c.emailThreads && c.emailThreads.length > 0 ? '<div class="email-link"><a href="' + c.emailThreads[0].url + '" target="_blank">\u2709\uFE0F ' + c.emailThreads[0].label + '</a></div>' : ''}${contactsHtml}</td>
+      <td><div class="company-name"><span class="risk-dot risk-dot-${c.riskLevel||'none'}" title="${{green:'🟢 Низкий риск',yellow:'🟡 Средний риск',red:'🔴 Высокий риск',none:'Не проверена'}[c.riskLevel||'none']}"></span>${c.name}${topBadge}${c.riskLevel && c.riskLevel !== 'none' ? '<span class="risk-label risk-label-'+c.riskLevel+'">'+(c.riskLevel==='green'?'LOW RISK':c.riskLevel==='yellow'?'MED RISK':'HIGH RISK')+'</span>' : ''}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s2}">${c.scores.s2}</span></td>
       <td class="score-cell"><span class="score-badge score-${c.scores.s3}">${c.scores.s3}</span></td>
@@ -867,12 +857,12 @@ function editRow(id) {
   document.getElementById('m-s4').value = c.scores.s4;
   document.getElementById('m-s5').value = c.scores.s5;
   document.getElementById('m-status').value = c.status;
+  document.getElementById('m-risk-level').value = c.riskLevel || 'none';
   document.getElementById('m-meeting-date').value = c.meetingDate || '';
   document.getElementById('m-meeting-link').value = c.meetingLink || '';
   document.getElementById('m-price').value = c.price || '';
   document.getElementById('m-launch').value = c.launch || '';
   document.getElementById('m-decision').value = c.decision || 'pending';
-    document.getElementById('m-favorability').value = c.favorability || 0;
   document.getElementById('m-notes').value = c.notes || '';
   document.getElementById('m-next-task').value = c.nextTask || '';
   document.getElementById('m-task-deadline').value = c.taskDeadline || '';
@@ -896,8 +886,8 @@ function addCompany() {
   document.getElementById('m-task-done').checked = false;
   ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
   document.getElementById('m-status').value = 'none';
+  document.getElementById('m-risk-level').value = 'none';
   document.getElementById('m-decision').value = 'pending';
-    c.favorability = parseInt(document.getElementById('m-favorability').value) || 0;
   document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
   document.getElementById('edit-modal').classList.add('show');
 }
@@ -917,6 +907,7 @@ async function saveModal() {
       s5: parseInt(document.getElementById('m-s5').value)
     },
     status: document.getElementById('m-status').value,
+    riskLevel: document.getElementById('m-risk-level').value,
     meetingDate: document.getElementById('m-meeting-date').value,
     meetingLink: document.getElementById('m-meeting-link').value,
     price: document.getElementById('m-price').value,
