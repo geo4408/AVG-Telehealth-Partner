@@ -369,7 +369,8 @@ var SEED_DATA = [
   {
     id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
     scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
-    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт)", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $50/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
+    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт) ✅", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $50/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
+    riskLevel: "green",
     meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
     notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $50/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
     meetingSummary: {
@@ -396,47 +397,92 @@ var SEED_DATA = [
     notes: "Intro & Demo пт 27 фев 11:30 AM с Susanna Lewis. Google Meet: meet.google.com/ohw-zxmi-sqa. Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
   },
   {
-    id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "https://whitelblrx.com/",
+    id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "Richard Kohn",
     scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
-    status: "booked", meetingDate: "Feb 27, 1:30 PM ET (пт)", price: "", launch: "", decision: "pending",
-    meetingLink: "https://us06web.zoom.us/j/84051750039?pwd=aJBtBjiZ9cMfXfzxDLOw4bajCZ880s.1",
-    notes: "⭐ GREAT FIT 22/25! Пт 27 фев 1:30 PM. Zoom с Richard Köhn (smartdoctors.us), pwd: 216710. Врачи 50 штатов + Puerto Rico. ED, Weight Loss, OTC. Pharmacy integration. White-label, HIPAA. ПРИОРИТЕТ #2!"
+    status: "met", meetingDate: "Feb 27 ✅ | Follow-up: Mar 4, 12:00 PM ET (ср) — СЕГОДНЯ", price: "$10K setup + $2,500/мес SaaS + $30/$60 doctor fee (Beluga)", launch: "~10 недель", decision: "pending",
+    riskLevel: "yellow",
+    meetingLink: "https://us06web.zoom.us/j/88198911753",
+    notes: "🟡 MEDIUM-HIGH RISK: Richard Kohn/Korres/Cohen — 3 разных фамилии. Владелец — tech middleman, НЕТ своих врачей (все через Beluga Health). $10K setup, $2,500/мес SaaS, $30 async / $60 video (fee идёт Beluga). Компании: Shirley 207 LLC, wethinkai.com, gustorx.com. Carol Köhn (родственница) в команде. Follow-up СЕГОДНЯ 12:00 PM ET — НЕТ В КАЛЕНДАРЕ! СТАТУС: Алина ведёт переписку.",
+    contactName: "Richard Kohn",
+    contactEmail: "richard@whitelblrx.com",
+    nextTask: "Follow-up звонок СЕГОДНЯ 12PM ET",
+    taskDeadline: "2026-03-04",
+    taskResponsible: "George"
   },
   {
-    id: 10, name: "Beluga Health", url: "https://belugahealth.com", contact: "https://www.belugahealth.com/",
+    id: 10, name: "Beluga Health", url: "https://belugahealth.com", contact: "joshua@belugahealth.com",
     scores: {s1:5, s2:5, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Mar 1, 9:20 AM ET (вс)", price: "", launch: "", decision: "pending",
-    meetingLink: "https://meet.google.com/yng-dbvd-ctw",
-    notes: "⭐ GOOD FIT 20/25. Вс 1 марта 9:20-9:40 AM ET, Google Meet, Discovery Call с Joshua Kishineff (joshua@belugahealth.com). Physician-only network, all 50 states. True white-label, DTC-native. Перенос: https://beluga-health.cal.com/booking/sDSH2apioFB89Nn1TMvoDH"
+    status: "contacted", meetingDate: "Mar 1 — ПРОПУЩЕНА, перенос ожидается", price: "", launch: "", decision: "pending",
+    meetingLink: "",
+    notes: "Звонок 1 марта пропущен. George отправил 3 извинительных email Joshua Kishineff (joshua@belugahealth.com) — с info@ и с личного. Заполнили форму на belugahealth.com повторно. ЖДЁМ ОТВЕТА от Joshua на перенос. Physician-only network, all 50 states. True white-label. Интересны напрямую (без WLRX middleman).",
+    contactName: "Joshua Kishineff",
+    contactEmail: "joshua@belugahealth.com",
+    nextTask: "Ждём ответ от Joshua на перенос звонка",
+    taskResponsible: "George"
   },
   {
-    id: 6, name: "Ola Digital Health", url: "https://oladigital.health", contact: "https://scheduler.zoom.us/alpeshrph/ola-digital-health-",
+    id: 6, name: "Ola Digital Health", url: "https://oladigital.health", contact: "het@oladigital.health",
     scores: {s1:4, s2:5, s3:4, s4:4, s5:3},
-    status: "booked", meetingDate: "Mar 2, 2:45 PM ET (пн)", price: "", launch: "", decision: "pending",
+    status: "rejected", meetingDate: "Mar 3, 1:00 PM ET (вт) — ПРОПУЩЕНА", price: "", launch: "", decision: "nogo",
+    riskLevel: "red",
     meetingLink: "https://us02web.zoom.us/j/7572757275?omn=85426982367",
-    notes: "Пн 2 марта 14:45-15:30 ET, Zoom с Alpesh Patel (therxcare@gmail.com). Участники: het, dhwani, sakshi, alpesh @oladigital.health. Сеть врачей во всех 50 штатах."
+    notes: "🔴 RED FLAG: Факт-чек медицинских утверждений. Демо было назначено на 3 марта 1PM — George не пришёл. Het Bhavsar написал 2 follow-up. Контакты: Het Bhavsar (het@oladigital.health), Dhwani (dhwani@dcodehealth.com), Alpesh Patel (alpesh@dcodehealth.com). СТАТУС: Алина ведёт переписку — нужно аккуратно съехать. Индийская команда (dcodehealth.com).",
+    contactName: "Het Bhavsar",
+    contactEmail: "het@oladigital.health",
+    nextTask: "Алина: аккуратно отказать",
+    taskResponsible: "Алина"
   },
   {
-    id: 15, name: "White Label MD", url: "https://whitelabelmd.com", contact: "https://launch.whitelabelmd.com/",
+    id: 15, name: "White Label MD", url: "https://whitelabelmd.com", contact: "justin.champion@whitelabelmd.com",
     scores: {s1:4, s2:4, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Mar 4, 2:00 PM ET (ср)", price: "", launch: "", decision: "pending",
+    status: "booked", meetingDate: "СЕГОДНЯ Mar 4, 2:00 PM ET (ср)", price: "", launch: "", decision: "pending",
     meetingLink: "https://meet.google.com/kkn-ghnv-mqn",
-    notes: "⭐ 18/25. ВСТРЕЧА ЗАБУКАНА ср 4 марта 2:00 PM ET с Justin Champion (justin.champion@whitelabelmd.com). Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ПРИНЯЛ приглашение. 'We can help' — ответил мгновенно. 100+ founders запустились за 6 мес. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label."
+    notes: "⭐ 18/25. ВСТРЕЧА СЕГОДНЯ 4 марта 2:00 PM ET с Justin Champion. Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ПРИНЯЛ приглашение. 100+ founders запустились за 6 мес. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label.",
+    contactName: "Justin Champion",
+    contactEmail: "justin.champion@whitelabelmd.com",
+    nextTask: "ВСТРЕЧА СЕГОДНЯ 2:00 PM ET",
+    taskDeadline: "2026-03-04",
+    taskResponsible: "George"
   },
   // ===== CONTACTED (по баллам — высшие первые) =====
   {
-    id: 2, name: "OpenLoop Health", url: "https://openloophealth.com", contact: "https://openloophealth.com/contact-sales",
+    id: 2, name: "OpenLoop Health", url: "https://openloophealth.com", contact: "jordann@openloophealth.com",
     scores: {s1:5, s2:5, s3:5, s4:5, s5:3},
-    status: "booked", meetingDate: "Mar 2, 3:30 PM ET (пн)", price: "", launch: "", decision: "pending",
+    status: "rejected", meetingDate: "Mar 2, 3:30 PM ET (пн) ✅ проведена", price: "", launch: "", decision: "nogo",
+    riskLevel: "red",
     meetingLink: "https://meet.google.com/ugz-zbvu-rss",
-    notes: "⭐ TOP FIT 23/25! ВСТРЕЧА ЗАБУКАНА пн 2 марта 3:30-4:00 PM EST. Google Meet: meet.google.com/ugz-zbvu-rss. Контакт: Jordan Narlock (jordan.narlock@openloophealth.com) + Emma Evans (emma.evans@openloophealth.com, Sales Dev Rep). ⚠️ Сразу после Ola Digital Health (2:45-3:30 PM) — плотное расписание! 20k клиницистов. Все 50 штатов. Weight loss, longevity, sexual health. Full white-label. 'Full-stack, white-labeled solutions'."
+    notes: "🔴 RED FLAG: Репутация — СЕРЬЁЗНЫЕ ПРОБЛЕМЫ. Встреча проведена 2 марта. Контакт: Jordan Narlock (jordann@openloophealth.com). Алина отправила благодарственное письмо 2 марта с info@advancedvitalitygroup.com. СТАТУС: Алина ведёт переписку — нужно аккуратно отказать.",
+    contactName: "Jordan Narlock",
+    contactEmail: "jordann@openloophealth.com",
+    nextTask: "Алина: аккуратно отказать",
+    taskResponsible: "Алина"
   },
   {
-    id: 9, name: "MD Integrations", url: "https://mdintegrations.com", contact: "https://mdintegrations.com/faq",
-    scores: {s1:5, s2:5, s3:4, s4:5, s5:4},
-    status: "booked", meetingDate: "Mar 3, 2:00 PM ET (вт)", price: "", launch: "", decision: "pending",
-    meetingLink: "https://mdintegrations.zoom.us/j/89683357553?pwd=qBQ0s8erdNrSMvdaKZaENkRkOfBQ4H.1",
-    notes: "⭐ PERFECT FIT 23/25! ПРИОРИТЕТ #1! ВСТРЕЧА ЗАБУКАНА вт 3 марта 2:00 PM EST. Zoom: mdintegrations.zoom.us/j/89683357553, Meeting ID: 896 8335 7553, Passcode: 167Mff. Контакт: Alyssa Foxson, MS (a.fox@mdintegrations.com, Inside Sales). Doctor-founded, 50 states, API-first. Её календарь: calendar.app.google/k4wQiF3TBEu7dFBK6."
+    id: 9, name: "MD Integrations", url: "https://mdintegrations.com", contact: "a.fox@mdintegrations.com",
+    scores: {s1:5, s2:5, s3:5, s4:5, s5:4},
+    status: "met", meetingDate: "Mar 3, 2:00 PM ET (вт) ✅ | Follow-up #2: СЕГОДНЯ Mar 4, 3:00 PM EST", price: "$5K setup + $20-40/consult + $3K/мес min", launch: "1-2 недели (White Label) / несколько недель (API)", decision: "go",
+    meetingLink: "https://mdintegrations.zoom.us/j/87420332397?pwd=397fa1RXmxVhITOVAg6hGm3I4reaOd.1",
+    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 3 марта — ОТЛИЧНО! 🔥 FOLLOW-UP #2 СЕГОДНЯ 4 марта 3PM EST! Участники: George, Alexandr Garan, Egor Pimenov + Alyssa Foxson (MDI). Zoom: mdintegrations.zoom.us/j/87420332397 Passcode: 0uTbX1. Основатель Dr. Marc Serota (строил Hims/Hers, Teladoc, HealthTap). Сотни MD врачей, 3M+ консультаций, 10K рецептов/день. ВСЕ 50 штатов + DC + Guam + PR. Только MD (no NP/PA). Своя EHR. SLA <1 час. BYO Pharmacy (Empower ✅). White-label hidden backend. Care Pair (upsell). $20 standard/$30 extended (WL), $30/$40 (HRT women). Labs: $10 order + $20 interpretation. Monthly min $3K начинается через 60 дней. Без эксклюзивности, 30 дней отказ. White glove onboarding + Slack. 📩 Alyssa прислала полный follow-up + 3 формы + Sales Deck + API docs.",
+    nextTask: "🔥 FOLLOW-UP СЕГОДНЯ 3:00 PM EST + заполнить 3 формы MDI",
+    taskDeadline: "2026-03-04",
+    taskResponsible: "Алина",
+    checklist: [
+      {text: "Подтвердить Alyssa follow-up чт 5 марта 3PM ET", done: false},
+      {text: "Заполнить Partner Intake Form", done: false},
+      {text: "Заполнить Proposed Offerings Form (TRT/HRT/peptides + дозировки Empower)", done: false},
+      {text: "Заполнить Work-back Plan Readiness Checklist", done: false},
+      {text: "Подготовить вопросы про payment flow для звонка с Alex", done: false},
+      {text: "Начать процесс LegitScript сертификации", done: false},
+      {text: "Уточнить про Alpha Biomed Pharmacy (research peptides)", done: false},
+      {text: "Получить info про Brand Ambassadors от Mark Sirota", done: false},
+      {text: "Igor: изучить API docs + Shopify/WooCommerce интеграцию", done: false}
+    ],
+    contactName: "Alyssa Foxson, M.S.",
+    contactEmail: "a.fox@mdintegrations.com",
+    contactPhone: "(314) 464-2400",
+    contactRole: "Inside Sales Executive",
+    pros: "Только MD врачи (no NP/PA); 50 штатов + DC + Guam + PR; 3M+ консультаций, 10K scripts/день; Своя EHR (homegrown); SLA <1 час; BYO Pharmacy (Empower ✅); White-label hidden backend; Care Pair upsell; White glove onboarding + Slack; Full API + Shopify + WooCommerce; PC+MSO структура (покрывает malpractice); Doctor-founded (Marc Serota - Hims, Teladoc, HealthTap); Без эксклюзивности",
+    prosCons: "BPC-157 пока banned (но скоро category 1); Alpha Biomed (research peptides) под вопросом; Не отслеживают доставку (pharmacy agnostic); Нельзя публиковать имена врачей MDI; $3K monthly min (но 60 дней буфер)"
   },
   {
     id: 1, name: "SteadyMD", url: "https://steadymd.com", contact: "https://www.steadymd.com/contact/",
