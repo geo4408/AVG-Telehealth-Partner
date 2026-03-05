@@ -1,1078 +1,969 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AVG Telehealth Partner Tracker</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
-.header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
-.header h1 { font-size: 22px; font-weight: 700; }
-.header h1 span { color: #38bdf8; }
-.header-actions { display: flex; gap: 10px; }
-.btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-.btn-primary { background: #2563eb; color: white; }
-.btn-primary:hover { background: #1d4ed8; }
-.btn-success { background: #059669; color: white; }
-.btn-success:hover { background: #047857; }
-.btn-outline { background: transparent; border: 1px solid #475569; color: #94a3b8; }
-.btn-outline:hover { border-color: #38bdf8; color: #38bdf8; }
-
-.criteria-bar { background: #1e293b; border-bottom: 1px solid #334155; padding: 16px 32px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-.criteria-chip { background: #334155; padding: 6px 14px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
-.criteria-chip .num { background: #2563eb; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
-
-.stats-bar { padding: 16px 32px; display: flex; gap: 16px; }
-.stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 14px 20px; flex: 1; }
-.stat-card .label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
-.stat-card .value.blue { color: #38bdf8; }
-.stat-card .value.green { color: #34d399; }
-.stat-card .value.amber { color: #fbbf24; }
-.stat-card .value.red { color: #f87171; }
-
-.filters { padding: 12px 32px; display: flex; gap: 10px; align-items: center; }
-.filter-btn { padding: 6px 14px; border-radius: 6px; background: #1e293b; border: 1px solid #334155; color: #94a3b8; cursor: pointer; font-size: 12px; }
-.filter-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
-
-.table-wrap { padding: 0 32px 32px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead th { background: #1e293b; padding: 10px 12px; text-align: left; font-weight: 600; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; border-bottom: 2px solid #334155; white-space: nowrap; }
-tbody tr { border-bottom: 1px solid #1e293b; transition: background 0.15s; }
-tbody tr:hover { background: #1e293b; }
-tbody td { padding: 10px 12px; vertical-align: middle; }
-.company-name { font-weight: 600; color: #f1f5f9; }
-.company-url { font-size: 11px; color: #64748b; }
-.company-url a { color: #38bdf8; text-decoration: none; }
-
-.score-cell { text-align: center; }
-.score-badge { display: inline-block; width: 28px; height: 28px; border-radius: 6px; line-height: 28px; text-align: center; font-weight: 700; font-size: 12px; }
-.score-1 { background: #7f1d1d; color: #fca5a5; }
-.score-2 { background: #78350f; color: #fcd34d; }
-.score-3 { background: #713f12; color: #fde68a; }
-.score-4 { background: #14532d; color: #86efac; }
-.score-5 { background: #064e3b; color: #6ee7b7; }
-
-.total-score { font-weight: 700; font-size: 16px; text-align: center; }
-.total-high { color: #34d399; }
-.total-mid { color: #fbbf24; }
-.total-low { color: #f87171; }
-
-.status-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-.status-none { background: #374151; color: #9ca3af; }
-.status-contacted { background: #1e3a5f; color: #60a5fa; }
-.status-booked { background: #064e3b; color: #34d399; }
-.status-done { background: #312e81; color: #a5b4fc; }
-.status-rejected { background: #7f1d1d; color: #fca5a5; }
-
-.editable { cursor: pointer; border-bottom: 1px dashed #475569; padding: 2px 4px; border-radius: 3px; min-width: 40px; display: inline-block; }
-.editable:hover { background: #334155; }
-.editable:focus { outline: 2px solid #2563eb; background: #1e293b; }
-
-select.inline-select { background: #1e293b; border: 1px solid #475569; color: #e2e8f0; padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-
-.decision-go { color: #34d399; font-weight: 700; }
-.decision-nogo { color: #f87171; font-weight: 700; }
-.decision-pending { color: #94a3b8; }
-
-.meeting-log-entry { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; position: relative; }
-.meeting-log-entry .log-date { color: #38bdf8; font-weight: 600; font-size: 12px; }
-.meeting-log-entry .log-type { background: #334155; color: #94a3b8; padding: 2px 8px; border-radius: 10px; font-size: 10px; margin-left: 8px; }
-.meeting-log-entry .log-type-first { background: #064e3b; color: #34d399; }
-.meeting-log-entry .log-type-followup { background: #312e81; color: #a5b4fc; }
-.meeting-log-entry .log-type-demo { background: #78350f; color: #fcd34d; }
-.meeting-log-entry .log-summary { color: #cbd5e1; font-size: 12px; margin-top: 6px; line-height: 1.5; white-space: pre-wrap; }
-.meeting-log-entry .log-delete { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #475569; cursor: pointer; font-size: 12px; }
-.meeting-log-entry .log-delete:hover { color: #f87171; }
-.meetings-log-badge { background: #1e3a5f; color: #60a5fa; padding: 2px 8px; border-radius: 10px; font-size: 10px; cursor: pointer; margin-left: 4px; }
-.meetings-log-badge:hover { background: #2563eb; color: #fff; }
-
-.notes-cell { max-width: 200px; }
-.notes-cell .editable { font-size: 11px; color: #94a3b8; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center; }
-.modal-overlay.show { display: flex; }
-.modal { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 600px; max-width: 90vw; max-height: 80vh; overflow-y: auto; }
-.modal h2 { font-size: 18px; margin-bottom: 20px; }
-.modal label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 4px; margin-top: 12px; }
-.modal input, .modal textarea, .modal select { width: 100%; background: #0f172a; border: 1px solid #475569; color: #e2e8f0; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
-.modal textarea { min-height: 80px; resize: vertical; }
-.modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; }
-
-.score-input-group { display: flex; gap: 8px; margin-top: 12px; }
-.score-input-item { flex: 1; text-align: center; }
-.score-input-item label { font-size: 10px; }
-.score-input-item select { text-align: center; }
-
-.meeting-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #334155; }
-.meeting-section h3 { font-size: 14px; color: #38bdf8; margin-bottom: 8px; }
-
-.row-actions { display: flex; gap: 4px; }
-.row-btn { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; color: #64748b; font-size: 14px; }
-.row-btn:hover { background: #334155; color: #e2e8f0; }
-
-.meeting-done-badge { display: inline-flex; align-items: center; gap: 4px; background: #312e81; color: #a5b4fc; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; }
-.meeting-done-badge .check { color: #34d399; font-size: 14px; }
-
-.summary-toggle { cursor: pointer; color: #38bdf8; font-size: 11px; text-decoration: underline; margin-top: 4px; display: inline-block; }
-.summary-toggle:hover { color: #7dd3fc; }
-
-.summary-panel { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 11px; color: #cbd5e1; line-height: 1.5; max-height: 300px; overflow-y: auto; }
-.summary-panel.show { display: block; }
-.summary-panel h4 { color: #38bdf8; font-size: 12px; margin: 8px 0 4px; }
-.summary-panel h4:first-child { margin-top: 0; }
-.summary-panel ul { margin: 4px 0 4px 16px; }
-.summary-panel .verdict { padding: 8px; border-radius: 6px; margin-top: 8px; font-weight: 600; }
-.summary-panel .verdict-positive { background: #064e3b; color: #34d399; border: 1px solid #059669; }
-.summary-panel .verdict-neutral { background: #78350f; color: #fcd34d; border: 1px solid #d97706; }
-.summary-panel .verdict-negative { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
-
-.task-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; line-height: 1.3; max-width: 220px; }
-.task-active { background: rgba(251,191,36,0.12); border: 1px solid #f59e0b; color: #fbbf24; }
-.task-overdue { background: rgba(239,68,68,0.12); border: 1px solid #ef4444; color: #f87171; animation: pulse-red 2s infinite; }
-.task-done { background: rgba(52,211,153,0.08); border: 1px solid #334155; color: #64748b; text-decoration: line-through; }
-.task-none { color: #475569; font-size: 11px; }
-.task-responsible { font-size: 9px; color: #94a3b8; margin-top: 2px; }
-.task-deadline { font-size: 10px; font-weight: 700; }
-.task-deadline.urgent { color: #f87171; }
-.task-deadline.soon { color: #fbbf24; }
-.task-deadline.normal { color: #94a3b8; }
-.task-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-@keyframes pulse-red { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-.contacts-toggle { cursor: pointer; color: #38bdf8; font-size: 11px; text-decoration: underline; margin-top: 4px; display: inline-block; }
-.contacts-toggle:hover { color: #7dd3fc; }
-
-.contacts-panel { display: none; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-top: 8px; font-size: 11px; color: #cbd5e1; line-height: 1.5; max-height: 300px; overflow-y: auto; }
-.contacts-panel.show { display: block; }
-
-.pros-cons { margin-top: 8px; }
-.pro-item { color: #34d399; font-size: 11px; margin: 2px 0; }
-.con-item { color: #f87171; font-size: 11px; margin: 2px 0; }
-
-.checklist-item { font-size: 11px; margin: 2px 0; cursor: pointer; }
-.checklist-panel { margin-top: 8px; }
-
-.risk-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
-.risk-dot-green { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
-.risk-dot-yellow { background: #eab308; box-shadow: 0 0 6px rgba(234,179,8,0.5); }
-.risk-dot-red { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
-.risk-dot-none { background: #475569; }
-.risk-label { font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
-.risk-label-green { background: rgba(34,197,94,0.15); color: #22c55e; }
-.risk-label-yellow { background: rgba(234,179,8,0.15); color: #eab308; }
-.risk-label-red { background: rgba(239,68,68,0.15); color: #ef4444; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVG Telehealth Partner Tracker - CRM Dashboard</title>
+    <!-- React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX support -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 font-sans">
+    <div id="root"></div>
 
-<div class="header">
-  <h1>AVG <span>Telehealth Partner Tracker</span></h1>
-  <div class="header-actions">
-    <button class="btn btn-outline" onclick="addCompany()">+ Добавить компанию</button>
-    <button class="btn btn-success" onclick="saveFile()">💾 Сохранить файл</button>
-  </div>
-</div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
 
-<div class="criteria-bar">
-  <span style="font-size:12px;color:#64748b;margin-right:4px;">Критерии (1-5):</span>
-  <div class="criteria-chip"><span class="num">1</span> Поставка врачей</div>
-  <div class="criteria-chip"><span class="num">2</span> 50 штатов</div>
-  <div class="criteria-chip"><span class="num">3</span> White-label + BYO pharmacy</div>
-  <div class="criteria-chip"><span class="num">4</span> TRT/HRT/пептиды/WL</div>
-  <div class="criteria-chip"><span class="num">5</span> Ценовая модель</div>
-  <span style="font-size:11px;color:#475569;margin-left:8px;">Проходной балл: ≥18/25</span>
-</div>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBVmswVGeSpMCB0YvpHnEqwpPIwuNfLM4o",
+            authDomain: "adv-meetings.firebaseapp.com",
+            projectId: "adv-meetings",
+            storageBucket: "adv-meetings.firebasestorage.app",
+            messagingSenderId: "459614018800",
+            appId: "1:459614018800:web:96b7b0e3b5d91e3b8aed71"
+        };
 
-<div class="stats-bar" id="stats-bar"></div>
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-<div class="filters">
-  <span style="font-size:12px;color:#64748b;">Фильтр:</span>
-  <button class="filter-btn active" onclick="setFilter('all')">Все</button>
-  <button class="filter-btn" onclick="setFilter('qualified')">Квалифицированные</button>
-  <button class="filter-btn" onclick="setFilter('booked')">Встреча забукана</button>
-  <button class="filter-btn" onclick="setFilter('done')">Встреча проведена</button>
-  <button class="filter-btn" onclick="setFilter('tasks')">🔥 Активные задачи</button>
-  <span style="color:#334155;margin:0 4px">|</span>
-  <button class="filter-btn" onclick="setFilter('risk-red')">🔴 Высокий риск</button>
-  <button class="filter-btn" onclick="setFilter('risk-green')">🟢 Низкий риск</button>
-  <button class="filter-btn" onclick="setFilter('risk-none')">⚪ Не проверены</button>
-</div>
+        // Utility Functions
+        const statusColors = {
+            none: 'bg-gray-600',
+            contacted: 'bg-blue-600',
+            booked: 'bg-yellow-600',
+            met: 'bg-teal-600',
+            done: 'bg-emerald-600',
+            rejected: 'bg-red-600'
+        };
 
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Компания</th>
-        <th class="score-cell">Врачи</th>
-        <th class="score-cell">50 шт.</th>
-        <th class="score-cell">WL+Pharm</th>
-        <th class="score-cell">Релев.</th>
-        <th class="score-cell">Цена</th>
-        <th class="score-cell">Итого</th>
-        <th>Статус</th>
-        <th>Встреча / Zoom</th>
-        <th>Цена/визит</th>
-        <th>Запуск</th>
-        <th>Решение</th>
-        <th>Задача / Next Step</th>
-        <th>Заметки</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
-</div>
+        const decisionColors = {
+            pending: 'bg-gray-600',
+            go: 'bg-green-600',
+            nogo: 'bg-red-600'
+        };
 
-<!-- Edit Modal -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal">
-    <h2 id="modal-title">Редактировать компанию</h2>
-    <label>Название</label>
-    <input id="m-name" placeholder="Company Name">
-    <label>Сайт</label>
-    <input id="m-url" placeholder="https://...">
-    <label>Контакт (URL/email для букинга)</label>
-    <input id="m-contact" placeholder="https://... или email">
+        const riskDots = {
+            green: 'bg-green-500',
+            yellow: 'bg-yellow-500',
+            red: 'bg-red-500',
+            none: 'bg-gray-500'
+        };
 
-    <div class="score-input-group">
-      <div class="score-input-item"><label>Врачи</label><select id="m-s1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>50 шт.</label><select id="m-s2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>WL+Pharm</label><select id="m-s3"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>Релев.</label><select id="m-s4"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-      <div class="score-input-item"><label>Цена</label><select id="m-s5"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></div>
-    </div>
+        // Login Component
+        function LoginPage({ onLoginSuccess, loading }) {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [signingIn, setSigningIn] = useState(false);
 
-    <label>Статус</label>
-    <select id="m-status">
-      <option value="none">Не начат</option>
-      <option value="contacted">Форма/Email отправлен</option>
-      <option value="booked">Встреча забукана</option>
-      <option value="done">Встреча проведена</option>
-      <option value="rejected">Не подходит</option>
-    </select>
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                setError('');
+                setSigningIn(true);
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    onLoginSuccess();
+                } catch (err) {
+                    setError(err.message || 'Login failed');
+                    setSigningIn(false);
+                }
+            };
 
-    <label>Уровень риска (по результатам анализа)</label>
-    <select id="m-risk-level">
-      <option value="none">⚪ Не проверена</option>
-      <option value="green">🟢 Низкий риск</option>
-      <option value="yellow">🟡 Средний риск</option>
-      <option value="red">🔴 Высокий риск</option>
-    </select>
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-slate-300">Loading...</p>
+                        </div>
+                    </div>
+                );
+            }
 
-    <div class="meeting-section">
-      <h3>После встречи</h3>
-      <label>Дата/время встречи</label>
-      <input id="m-meeting-date" placeholder="Feb 27, 10:00 AM ET">
-      <label>Ссылка на Zoom/Meet</label>
-      <input id="m-meeting-link" placeholder="https://zoom.us/j/... или https://meet.google.com/...">
-      <label>Цена за визит / модель</label>
-      <input id="m-price" placeholder="$75/consult, $X/month, rev-share...">
-      <label>Скорость запуска</label>
-      <input id="m-launch" placeholder="2-4 weeks, 30 days, etc.">
-      <label>Решение</label>
-      <select id="m-decision">
-        <option value="pending">Ожидание</option>
-        <option value="go">GO ✓</option>
-        <option value="nogo">NO-GO ✗</option>
-      </select>
-      <label>Заметки</label>
-      <textarea id="m-notes" placeholder="Ключевые моменты, впечатления, контакты..."></textarea>
-    </div>
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+                    <div className="bg-slate-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl font-bold text-white mb-2">AVG Telehealth</h1>
+                            <p className="text-slate-400">Partner Tracker</p>
+                        </div>
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                    placeholder="your@email.com"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                    placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
+                                    required
+                                />
+                            </div>
+                            {error && (
+                                <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg text-red-300 text-sm">
+                                    {error}
+                                </div>
+                            )}
+                            <button
+                                type="submit"
+                                disabled={signingIn}
+                                className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
+                            >
+                                {signingIn ? 'Signing in...' : 'Sign In'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
 
-    <div class="meeting-section">
-      <h3>📋 Задача / Next Step</h3>
-      <label>Что нужно сделать</label>
-      <input id="m-next-task" placeholder="Получить proposal, назначить follow-up, подписать контракт...">
-      <label>Дедлайн</label>
-      <input id="m-task-deadline" placeholder="Mar 5 или 2025-03-05">
-      <label>Ответственный</label>
-      <input id="m-task-responsible" placeholder="Имя ответственного (напр. Alina Rakhimzhanova)">
-      <label style="display:inline-flex;align-items:center;gap:8px;margin-top:8px">
-        <input type="checkbox" id="m-task-done" style="width:auto"> Задача выполнена
-      </label>
-    </div>
+        // Inline Editor Component
+        function InlineEditor({ value, onSave, type = 'text', options = [], fieldName = '' }) {
+            const [isEditing, setIsEditing] = useState(false);
+            const [editValue, setEditValue] = useState(value || '');
+            const inputRef = useRef(null);
 
-    <div class="meeting-section">
-      <h3>👥 Контакты</h3>
-      <label>Контактное лицо</label>
-      <input id="m-contact-name" placeholder="Имя контактного лица">
-      <label>Email</label>
-      <input id="m-contact-email" placeholder="email@company.com">
-      <label>Телефон / WhatsApp</label>
-      <input id="m-contact-phone" placeholder="+1 234 567 8900">
-      <label>Должность</label>
-      <input id="m-contact-role" placeholder="CEO, Account Manager, etc.">
-    </div>
+            useEffect(() => {
+                if (isEditing && inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, [isEditing]);
 
-    <div class="meeting-section">
-      <h3>💪 Сильные / Слабые стороны</h3>
-      <label>Сильные стороны (через ;)</label>
-      <textarea id="m-pros" placeholder="50 штатов; Быстрый запуск; Хорошие цены"></textarea>
-      <label>Слабые стороны (через ;)</label>
-      <textarea id="m-pros-cons" placeholder="Нет TRT; Долгий онбординг"></textarea>
-    </div>
+            const handleSave = () => {
+                onSave(editValue);
+                setIsEditing(false);
+            };
 
-    <div class="meeting-section">
-      <h3>❓ Чеклист вопросов</h3>
-      <label>Вопросы (через ; — можно добавить [x] для отмеченных)</label>
-      <textarea id="m-checklist" placeholder="Blood tests?; Можем ли видеть прескрипшны?; [x] Уже уточнили цены"></textarea>
-    </div>
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    handleSave();
+                } else if (e.key === 'Escape') {
+                    setIsEditing(false);
+                    setEditValue(value || '');
+                }
+            };
 
-    <div class="meeting-section">
-      <h3>📝 Лог встреч</h3>
-      <div id="m-meetings-log" style="margin-bottom:10px"></div>
-      <div style="background:#0f172a;border:1px solid #475569;border-radius:8px;padding:12px;margin-top:8px">
-        <label style="color:#38bdf8;font-weight:600">+ Добавить запись о встрече</label>
-        <input id="m-meeting-log-date" placeholder="Feb 27, 2026" style="margin-top:6px">
-        <select id="m-meeting-log-type" style="margin-top:4px">
-          <option value="first">Первичная встреча</option>
-          <option value="followup">Follow-up</option>
-          <option value="demo">Демо / Презентация</option>
-          <option value="call">Звонок</option>
-          <option value="email">Email-переписка</option>
-        </select>
-        <textarea id="m-meeting-log-summary" placeholder="Коротко: о чём говорили, ключевые выводы, что решили" style="margin-top:4px;min-height:80px"></textarea>
-        <button class="btn btn-primary" style="margin-top:6px;width:100%" onclick="addMeetingLog()">Добавить запись</button>
-      </div>
-    </div>
+            if (!isEditing) {
+                return (
+                    <div
+                        onClick={() => setIsEditing(true)}
+                        className="cursor-pointer hover:bg-slate-700 px-2 py-1 rounded transition-colors"
+                    >
+                        {fieldName === 'contactEmail' && value ? (
+                            <a href={`mailto:${value}`} onClick={(e) => e.stopPropagation()} className="text-blue-400 hover:underline">
+                                {value}
+                            </a>
+                        ) : (
+                            <span className={value ? 'text-slate-200' : 'text-slate-500 italic'}>{value || 'â'}</span>
+                        )}
+                    </div>
+                );
+            }
 
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">Отмена</button>
-      <button class="btn btn-primary" onclick="saveModal()">Сохранить</button>
-    </div>
-  </div>
-</div>
+            if (type === 'select') {
+                return (
+                    <select
+                        ref={inputRef}
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        className="px-2 py-1 bg-slate-700 border border-blue-500 rounded text-white focus:outline-none"
+                    >
+                        {options.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                    </select>
+                );
+            }
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+            return (
+                <input
+                    ref={inputRef}
+                    type={type}
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    className="px-2 py-1 bg-slate-700 border border-blue-500 rounded text-white focus:outline-none w-full"
+                />
+            );
+        }
 
-<script>
-// ========== FIREBASE CONFIG ==========
-firebase.initializeApp({
-  apiKey: "AIzaSyAvNGtUi6xoV_cMozgsDfJ9qfhOPvRe7N0",
-  authDomain: "adv-meetings.firebaseapp.com",
-  projectId: "adv-meetings",
-  storageBucket: "adv-meetings.firebasestorage.app",
-  messagingSenderId: "1044887682497",
-  appId: "1:1044887682497:web:cc7944ddd314ea79144340"
-});
-var db = firebase.firestore();
-var COLLECTION = 'companies';
+        // Company Card (Expanded View)
+        function CompanyCard({ company, onClose, onUpdate, onDelete, currentUser }) {
+            const [isDeleting, setIsDeleting] = useState(false);
 
-// ========== DATA (fallback seed — used only if Firestore is empty) ==========
-var SEED_DATA = [
-  // ===== ЗАБУКАННЫЕ ВСТРЕЧИ (по дате) =====
-  {
-    id: 7, name: "DrCare247", url: "https://drcare247.com", contact: "https://www.drcare247.com/",
-    scores: {s1:4, s2:5, s3:3, s4:2, s5:2},
-    status: "done", meetingDate: "Feb 26, 1:30 PM ET (чт) ✅", price: "$5000 setup + $500/мес + $1000/мес мин (20 консультаций) + $50/консульт сверх", launch: "2-4 недели после контракта", decision: "pending",
-    riskLevel: "green",
-    meetingLink: "https://us06web.zoom.us/j/89130178538?pwd=lxfiPffWmRPxGM1POOGN5iYkPBj6E.1",
-    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 26 фев. Контакт: Shafi Ahamed, тел: +917708614041 / US: +1 6302306699. Работают через WebDoctors (webdoctors.com/meet-the-doctor) — 6 врачей, board-certified MDs, все 50 штатов, Chicago-based до 10 PM CT. Аптека: Belmar Pharma Solutions (belmarpharmasolutions.com), могут подключить Empower. Turnkey: intake → eligibility → консультация (video/phone, 15-30 мин callback) → Rx → shipping 24-48ч. SSO + patient portal + Shopify интеграция + GoHighLevel CRM + PracticeQ. Протоколы TRT/GLP/ED стандартные или свои. HIPAA, BAA, MSO контракты. Цена: $5K setup, $500/мес tech, $1000/мес мин за 20 консультов, далее $50/консульт. Минусы: нет точного слотового расписания (только callback 15-30 мин), пептиды — не во всех штатах. СЛЕДУЮЩИЙ ШАГ: получить proposal с ценами от Shafi, назначить follow-up звонок.",
-    meetingSummary: {
-      verdict: "positive",
-      verdictText: "Хороший кандидат — покрывает все 50 штатов, turnkey решение, разумная цена. Нужно уточнить слоты и пептиды.",
-      pricing: "$5000 setup + $500/мес tech + $1000/мес минимум (20 консультов) + $50/консульт далее",
-      nextSteps: "Получить proposal, назначить follow-up звонок с Shafi (+1 6302306699)",
-      keyContacts: "Shafi Ahamed: +917708614041 / US: +1 6302306699",
-      partners: "WebDoctors (webdoctors.com), Belmar Pharma (belmarpharmasolutions.com)"
-    }
-  },
-  {
-    id: 8, name: "Qualiphy", url: "https://qualiphy.me", contact: "lorena@qualiphy.me",
-    scores: {s1:2, s2:4, s3:2, s4:3, s5:2},
-    status: "booked", meetingDate: "Feb 27, 10:00 AM ET (пт)", price: "$27.99/визит", launch: "", decision: "pending",
-    meetingLink: "https://meet.google.com/xmq-ztmu-ysa",
-    notes: "Встреча пт 27 фев 10:00-10:30 AM ET. 'Qualiphy GFE & Rx Fulfillment Solution' с Lorena Santiago (lorena@qualiphy.me). Google Meet: meet.google.com/xmq-ztmu-ysa. Calendly: calendly.com/events/a4cf7a11-31af-48dc-a5b9-2e555654b21e/google_meet. Pay-per-consult маркетплейс ($27.99/визит). Уточнить модель."
-  },
-  {
-    id: 13, name: "Bask Health", url: "https://bask.health", contact: "https://bask.health/",
-    scores: {s1:3, s2:3, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "Feb 27, 11:30 AM ET (пт)", price: "", launch: "", decision: "pending",
-    meetingLink: "https://meet.google.com/ohw-zxmi-sqa",
-    notes: "Intro & Demo пт 27 фев 11:30 AM с Susanna Lewis. Google Meet: meet.google.com/ohw-zxmi-sqa. Платформа Private Beta. Софт: EMR, Compounding, Pharmacy, Order Mgmt. Уточнить: поставляют ли врачей или только платформу."
-  },
-  {
-    id: 12, name: "White Label Rx", url: "https://whitelblrx.com", contact: "Richard Kohn",
-    scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
-    status: "met", meetingDate: "Feb 27 ✅ | Follow-up: Mar 4, 12:00 PM ET (ср) — СЕГОДНЯ", price: "$10K setup + $2,500/мес SaaS + $30/$60 doctor fee (Beluga)", launch: "~10 недель", decision: "pending",
-    riskLevel: "yellow",
-    meetingLink: "https://us06web.zoom.us/j/88198911753",
-    notes: "🟡 MEDIUM-HIGH RISK: Richard Kohn/Korres/Cohen — 3 разных фамилии. Владелец — tech middleman, НЕТ своих врачей (все через Beluga Health). $10K setup, $2,500/мес SaaS, $30 async / $60 video (fee идёт Beluga). Компании: Shirley 207 LLC, wethinkai.com, gustorx.com. Carol Köhn (родственница) в команде. Follow-up СЕГОДНЯ 12:00 PM ET — НЕТ В КАЛЕНДАРЕ! СТАТУС: Алина ведёт переписку.",
-    contactName: "Richard Kohn",
-    contactEmail: "richard@whitelblrx.com",
-    nextTask: "Follow-up звонок СЕГОДНЯ 12PM ET",
-    taskDeadline: "2026-03-04",
-    taskResponsible: "George"
-  },
-  {
-    id: 10, name: "Beluga Health", url: "https://belugahealth.com", contact: "joshua@belugahealth.com",
-    scores: {s1:5, s2:5, s3:4, s4:3, s5:3},
-    status: "contacted", meetingDate: "Mar 1 — ПРОПУЩЕНА, перенос ожидается", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "Звонок 1 марта пропущен. George отправил 3 извинительных email Joshua Kishineff (joshua@belugahealth.com) — с info@ и с личного. Заполнили форму на belugahealth.com повторно. ЖДЁМ ОТВЕТА от Joshua на перенос. Physician-only network, all 50 states. True white-label. Интересны напрямую (без WLRX middleman).",
-    contactName: "Joshua Kishineff",
-    contactEmail: "joshua@belugahealth.com",
-    nextTask: "Ждём ответ от Joshua на перенос звонка",
-    taskResponsible: "George"
-  },
-  {
-    id: 6, name: "Ola Digital Health", url: "https://oladigital.health", contact: "het@oladigital.health",
-    scores: {s1:4, s2:5, s3:4, s4:4, s5:3},
-    status: "rejected", meetingDate: "Mar 3, 1:00 PM ET (вт) — ПРОПУЩЕНА", price: "", launch: "", decision: "nogo",
-    riskLevel: "red",
-    meetingLink: "https://us02web.zoom.us/j/7572757275?omn=85426982367",
-    notes: "🔴 RED FLAG: Факт-чек медицинских утверждений. Демо было назначено на 3 марта 1PM — George не пришёл. Het Bhavsar написал 2 follow-up. Контакты: Het Bhavsar (het@oladigital.health), Dhwani (dhwani@dcodehealth.com), Alpesh Patel (alpesh@dcodehealth.com). СТАТУС: Алина ведёт переписку — нужно аккуратно съехать. Индийская команда (dcodehealth.com).",
-    contactName: "Het Bhavsar",
-    contactEmail: "het@oladigital.health",
-    nextTask: "Алина: аккуратно отказать",
-    taskResponsible: "Алина"
-  },
-  {
-    id: 15, name: "White Label MD", url: "https://whitelabelmd.com", contact: "justin.champion@whitelabelmd.com",
-    scores: {s1:4, s2:4, s3:4, s4:3, s5:3},
-    status: "booked", meetingDate: "СЕГОДНЯ Mar 4, 2:00 PM ET (ср)", price: "", launch: "", decision: "pending",
-    meetingLink: "https://meet.google.com/kkn-ghnv-mqn",
-    notes: "⭐ 18/25. ВСТРЕЧА СЕГОДНЯ 4 марта 2:00 PM ET с Justin Champion. Google Meet: meet.google.com/kkn-ghnv-mqn. Justin ПРИНЯЛ приглашение. 100+ founders запустились за 6 мес. E-commerce telemedicine + on-demand Rx fulfillment. Turnkey white-label.",
-    contactName: "Justin Champion",
-    contactEmail: "justin.champion@whitelabelmd.com",
-    nextTask: "ВСТРЕЧА СЕГОДНЯ 2:00 PM ET",
-    taskDeadline: "2026-03-04",
-    taskResponsible: "George"
-  },
-  // ===== CONTACTED (по баллам — высшие первые) =====
-  {
-    id: 2, name: "OpenLoop Health", url: "https://openloophealth.com", contact: "jordann@openloophealth.com",
-    scores: {s1:5, s2:5, s3:5, s4:5, s5:3},
-    status: "rejected", meetingDate: "Mar 2, 3:30 PM ET (пн) ✅ проведена", price: "", launch: "", decision: "nogo",
-    riskLevel: "red",
-    meetingLink: "https://meet.google.com/ugz-zbvu-rss",
-    notes: "🔴 RED FLAG: Репутация — СЕРЬЁЗНЫЕ ПРОБЛЕМЫ. Встреча проведена 2 марта. Контакт: Jordan Narlock (jordann@openloophealth.com). Алина отправила благодарственное письмо 2 марта с info@advancedvitalitygroup.com. СТАТУС: Алина ведёт переписку — нужно аккуратно отказать.",
-    contactName: "Jordan Narlock",
-    contactEmail: "jordann@openloophealth.com",
-    nextTask: "Алина: аккуратно отказать",
-    taskResponsible: "Алина"
-  },
-  {
-    id: 9, name: "MD Integrations", url: "https://mdintegrations.com", contact: "a.fox@mdintegrations.com",
-    scores: {s1:5, s2:5, s3:5, s4:5, s5:4},
-    status: "met", meetingDate: "Mar 3, 2:00 PM ET (вт) ✅ | Follow-up #2: СЕГОДНЯ Mar 4, 3:00 PM EST", price: "$5K setup + $20-40/consult + $3K/мес min", launch: "1-2 недели (White Label) / несколько недель (API)", decision: "go",
-    meetingLink: "https://mdintegrations.zoom.us/j/87420332397?pwd=397fa1RXmxVhITOVAg6hGm3I4reaOd.1",
-    notes: "✅ ВСТРЕЧА ПРОВЕДЕНА 3 марта — ОТЛИЧНО! 🔥 FOLLOW-UP #2 СЕГОДНЯ 4 марта 3PM EST! Участники: George, Alexandr Garan, Egor Pimenov + Alyssa Foxson (MDI). Zoom: mdintegrations.zoom.us/j/87420332397 Passcode: 0uTbX1. Основатель Dr. Marc Serota (строил Hims/Hers, Teladoc, HealthTap). Сотни MD врачей, 3M+ консультаций, 10K рецептов/день. ВСЕ 50 штатов + DC + Guam + PR. Только MD (no NP/PA). Своя EHR. SLA <1 час. BYO Pharmacy (Empower ✅). White-label hidden backend. Care Pair (upsell). $20 standard/$30 extended (WL), $30/$40 (HRT women). Labs: $10 order + $20 interpretation. Monthly min $3K начинается через 60 дней. Без эксклюзивности, 30 дней отказ. White glove onboarding + Slack. 📩 Alyssa прислала полный follow-up + 3 формы + Sales Deck + API docs.",
-    nextTask: "🔥 FOLLOW-UP СЕГОДНЯ 3:00 PM EST + заполнить 3 формы MDI",
-    taskDeadline: "2026-03-04",
-    taskResponsible: "Алина",
-    checklist: [
-      {text: "Подтвердить Alyssa follow-up чт 5 марта 3PM ET", done: false},
-      {text: "Заполнить Partner Intake Form", done: false},
-      {text: "Заполнить Proposed Offerings Form (TRT/HRT/peptides + дозировки Empower)", done: false},
-      {text: "Заполнить Work-back Plan Readiness Checklist", done: false},
-      {text: "Подготовить вопросы про payment flow для звонка с Alex", done: false},
-      {text: "Начать процесс LegitScript сертификации", done: false},
-      {text: "Уточнить про Alpha Biomed Pharmacy (research peptides)", done: false},
-      {text: "Получить info про Brand Ambassadors от Mark Sirota", done: false},
-      {text: "Igor: изучить API docs + Shopify/WooCommerce интеграцию", done: false}
-    ],
-    contactName: "Alyssa Foxson, M.S.",
-    contactEmail: "a.fox@mdintegrations.com",
-    contactPhone: "(314) 464-2400",
-    contactRole: "Inside Sales Executive",
-    pros: "Только MD врачи (no NP/PA); 50 штатов + DC + Guam + PR; 3M+ консультаций, 10K scripts/день; Своя EHR (homegrown); SLA <1 час; BYO Pharmacy (Empower ✅); White-label hidden backend; Care Pair upsell; White glove onboarding + Slack; Full API + Shopify + WooCommerce; PC+MSO структура (покрывает malpractice); Doctor-founded (Marc Serota - Hims, Teladoc, HealthTap); Без эксклюзивности",
-    prosCons: "BPC-157 пока banned (но скоро category 1); Alpha Biomed (research peptides) под вопросом; Не отслеживают доставку (pharmacy agnostic); Нельзя публиковать имена врачей MDI; $3K monthly min (но 60 дней буфер)"
-  },
-  {
-    id: 1, name: "SteadyMD", url: "https://steadymd.com", contact: "https://www.steadymd.com/contact/",
-    scores: {s1:5, s2:5, s3:4, s4:5, s5:3},
-    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "⭐ ОТВЕТ от Lindsey Anderson (VP Enterprise Sales, lindsey@steadymd.com) 26 фев. Просит детали: какие мед. направления, масштаб, текущие/новые пациенты. НУЖНО ОТВЕТИТЬ с описанием TRT/HRT программы. Сотни врачей во всех 50 штатах. Партнёры Amazon Clinic."
-  },
-  {
-    id: 4, name: "WellSync", url: "https://wellsync.com", contact: "https://wellsync.com/contact/",
-    scores: {s1:4, s2:3, s3:4, s4:5, s5:3},
-    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "Форма заполнена, ждёт reCAPTCHA. Telehealth Provider Network. TRT, GLP-1, пептиды в чекбоксах формы. Покрытие штатов уточнить."
-  },
-  {
-    id: 5, name: "MyTelemedicine", url: "https://mytelemedicine.com", contact: "sales@mytelemedicine.com",
-    scores: {s1:4, s2:4, s3:4, s4:4, s5:3},
-    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "Email отправлен на sales@mytelemedicine.com. JD Power #1 2024. Nationwide clinician network. White-label, DTC-focused."
-  },
-  {
-    id: 3, name: "Wheel", url: "https://wheel.com", contact: "https://info.wheel.com/l/1037703/2026-01-30/37bh9",
-    scores: {s1:4, s2:5, s3:2, s4:3, s5:2},
-    status: "contacted", meetingDate: "", price: "", launch: "", decision: "pending",
-    meetingLink: "",
-    notes: "⚠️ MAYBE — форма заполнена, ждёт reCAPTCHA. $216M funding. Не ясно: BYO-pharmacy (2/5), нет явного фокуса TRT/пептиды (3/5), enterprise-pricing не для $137/мес (2/5). Уточнить на звонке."
-  },
-  {
-    id: 16, name: "This American Doc", url: "https://thisamericandoc.com", contact: "https://thisamericandoc.com/companies",
-    scores: {s1:4, s2:4, s3:3, s4:2, s5:3},
-    status: "rejected", meetingDate: "", price: "", launch: "", decision: "nogo",
-    meetingLink: "",
-    notes: "❌ БАУНС — email info@thisamericandoc.com не существует (550 5.1.1 address not found). Email отправлен 26 фев, вернулся. Physician-owned telehealth staffing. 16/25 — был ниже проходного. УБРАТЬ."
-  }
-];
+            const handleUpdateField = async (field, value) => {
+                try {
+                    const docRef = db.collection('companies').doc(company.id.toString());
+                    const updateData = {
+                        [field]: value,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastEditedBy: currentUser.email
+                    };
+                    await docRef.update(updateData);
+                    onUpdate({ ...company, [field]: value });
+                } catch (err) {
+                    console.error('Error updating field:', err);
+                    alert('Failed to update: ' + err.message);
+                }
+            };
 
-var DATA = [];
-var currentFilter = 'all';
-var editingId = null;
-var syncStatus = 'idle'; // idle, syncing, synced, error
+            const handleDeleteCompany = async () => {
+                if (!window.confirm(`Are you sure you want to delete "${company.name}"? This cannot be undone.`)) {
+                    return;
+                }
+                setIsDeleting(true);
+                try {
+                    await db.collection('companies').doc(company.id.toString()).delete();
+                    onDelete(company.id);
+                } catch (err) {
+                    console.error('Error deleting company:', err);
+                    alert('Failed to delete: ' + err.message);
+                    setIsDeleting(false);
+                }
+            };
 
-// ========== FIRESTORE FUNCTIONS ==========
-function setSyncStatus(status, msg) {
-  syncStatus = status;
-  var el = document.getElementById('sync-indicator');
-  if (!el) return;
-  var labels = {idle:'', syncing:'⏳ Сохранение...', synced:'✅ Сохранено в облако', error:'❌ Ошибка: ' + (msg||'')};
-  var colors = {idle:'transparent', syncing:'#fbbf24', synced:'#34d399', error:'#f87171'};
-  el.textContent = labels[status] || '';
-  el.style.color = colors[status] || '#94a3b8';
-  if (status === 'synced') setTimeout(function(){ if (syncStatus === 'synced') { el.textContent = ''; } }, 3000);
-}
+            const handleAddChecklistItem = async () => {
+                const text = prompt('Enter checklist item:');
+                if (text) {
+                    const newChecklist = [...(company.checklist || []), { text, done: false }];
+                    await handleUpdateField('checklist', newChecklist);
+                }
+            };
 
-async function loadFromFirestore() {
-  try {
-    var snapshot = await db.collection(COLLECTION).get();
-    if (snapshot.empty) return [];
-    var arr = [];
-    snapshot.forEach(function(doc) {
-      var d = doc.data();
-      d._docId = doc.id;
-      arr.push(d);
-    });
-    return arr;
-  } catch(e) {
-    console.error('Firestore load error:', e);
-    return [];
-  }
-}
+            const handleToggleChecklistItem = async (index) => {
+                const newChecklist = company.checklist ? [...company.checklist] : [];
+                if (newChecklist[index]) {
+                    newChecklist[index].done = !newChecklist[index].done;
+                    await handleUpdateField('checklist', newChecklist);
+                }
+            };
 
-async function saveToFirestore(obj) {
-  setSyncStatus('syncing');
-  try {
-    var docId = String(obj.id);
-    var saveObj = Object.assign({}, obj);
-    delete saveObj._docId;
-    await db.collection(COLLECTION).doc(docId).set(saveObj);
-    setSyncStatus('synced');
-  } catch(e) {
-    console.error('Firestore save error:', e);
-    setSyncStatus('error', e.message);
-  }
-}
+            const handleRemoveChecklistItem = async (index) => {
+                const newChecklist = company.checklist ? [...company.checklist] : [];
+                newChecklist.splice(index, 1);
+                await handleUpdateField('checklist', newChecklist);
+            };
 
-async function deleteFromFirestore(id) {
-  setSyncStatus('syncing');
-  try {
-    await db.collection(COLLECTION).doc(String(id)).delete();
-    setSyncStatus('synced');
-  } catch(e) {
-    console.error('Firestore delete error:', e);
-    setSyncStatus('error', e.message);
-  }
-}
+            const totalScore = (company.s1 || 0) + (company.s2 || 0) + (company.s3 || 0) + (company.s4 || 0) + (company.s5 || 0);
 
-async function seedFirestore() {
-  setSyncStatus('syncing');
-  try {
-    var batch = db.batch();
-    SEED_DATA.forEach(function(item) {
-      var docRef = db.collection(COLLECTION).doc(String(item.id));
-      batch.set(docRef, item);
-    });
-    await batch.commit();
-    setSyncStatus('synced');
-    console.log('Seeded ' + SEED_DATA.length + ' companies to Firestore');
-  } catch(e) {
-    console.error('Firestore seed error:', e);
-    setSyncStatus('error', e.message);
-  }
-}
+            return (
+                <div className="bg-slate-800 rounded-lg border border-slate-700 p-6 mb-4 space-y-6">
+                    <div className="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 className="text-2xl font-bold text-white">{company.name}</h3>
+                            {company.url && <a href={company.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-sm">{company.url}</a>}
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="text-slate-400 hover:text-slate-200 text-2xl font-light"
+                        >
+                            Ã
+                        </button>
+                    </div>
 
-async function initApp() {
-  // Add sync indicator to header
-  var headerActions = document.querySelector('.header-actions');
-  if (headerActions) {
-    var indicator = document.createElement('span');
-    indicator.id = 'sync-indicator';
-    indicator.style.cssText = 'font-size:12px;padding:8px 12px;color:#94a3b8;';
-    headerActions.insertBefore(indicator, headerActions.firstChild);
-  }
+                    {/* Scores */}
+                    <div className="grid grid-cols-5 gap-2">
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <div key={i} className="bg-slate-700 rounded p-3 text-center">
+                                <label className="text-xs text-slate-400 block mb-1">Score {i}</label>
+                                <InlineEditor
+                                    value={company[`s${i}`] || ''}
+                                    onSave={(val) => handleUpdateField(`s${i}`, parseInt(val) || 0)}
+                                    type="number"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="bg-slate-700 rounded p-3 text-center">
+                        <p className="text-sm text-slate-400 mb-1">Total Score</p>
+                        <p className="text-2xl font-bold text-blue-400">{totalScore}</p>
+                    </div>
 
-  setSyncStatus('syncing');
-  var firestoreData = await loadFromFirestore();
+                    {/* Contact Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-sm text-slate-400">Contact Name</label>
+                            <InlineEditor
+                                value={company.contactName || ''}
+                                onSave={(val) => handleUpdateField('contactName', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Contact Email</label>
+                            <InlineEditor
+                                value={company.contactEmail || ''}
+                                onSave={(val) => handleUpdateField('contactEmail', val)}
+                                fieldName="contactEmail"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Contact Phone</label>
+                            <InlineEditor
+                                value={company.contactPhone || ''}
+                                onSave={(val) => handleUpdateField('contactPhone', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Contact Role</label>
+                            <InlineEditor
+                                value={company.contactRole || ''}
+                                onSave={(val) => handleUpdateField('contactRole', val)}
+                            />
+                        </div>
+                    </div>
 
-  if (firestoreData.length > 0) {
-    DATA = firestoreData;
-    console.log('Loaded ' + DATA.length + ' companies from Firestore');
-    setSyncStatus('synced');
-  } else {
-    console.log('Firestore empty — seeding with SEED_DATA...');
-    DATA = SEED_DATA.slice();
-    await seedFirestore();
-  }
-  renderAll();
-}
+                    {/* Meeting Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-sm text-slate-400">Meeting Date</label>
+                            <InlineEditor
+                                value={company.meetingDate || ''}
+                                onSave={(val) => handleUpdateField('meetingDate', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Meeting Link</label>
+                            {company.meetingLink ? (
+                                <div className="flex items-center gap-2">
+                                    <a href={company.meetingLink} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-sm truncate flex-1">
+                                        {company.meetingLink}
+                                    </a>
+                                </div>
+                            ) : null}
+                            <InlineEditor
+                                value={company.meetingLink || ''}
+                                onSave={(val) => handleUpdateField('meetingLink', val)}
+                            />
+                        </div>
+                    </div>
 
-// ========== UI FUNCTIONS ==========
-function getTotal(c) { return c.scores.s1 + c.scores.s2 + c.scores.s3 + c.scores.s4 + c.scores.s5; }
-function isQualified(c) { return getTotal(c) >= 18; }
+                    {/* Task Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label className="text-sm text-slate-400">Next Task</label>
+                            <InlineEditor
+                                value={company.nextTask || ''}
+                                onSave={(val) => handleUpdateField('nextTask', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Task Deadline</label>
+                            <InlineEditor
+                                value={company.taskDeadline || ''}
+                                onSave={(val) => handleUpdateField('taskDeadline', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Responsible</label>
+                            <InlineEditor
+                                value={company.taskResponsible || ''}
+                                onSave={(val) => handleUpdateField('taskResponsible', val)}
+                            />
+                        </div>
+                    </div>
 
-function renderStats() {
-  var total = DATA.length;
-  var qualified = DATA.filter(isQualified).length;
-  var booked = DATA.filter(c => c.status === 'booked' || c.status === 'done').length;
-  var done = DATA.filter(c => c.status === 'done').length;
-  var activeTasks = DATA.filter(c => c.nextTask && !c.taskDone).length;
-  var overdueTasks = DATA.filter(c => { if (!c.nextTask || c.taskDone) return false; var d = parseTaskDeadline(c.taskDeadline); var now = new Date(); now.setHours(0,0,0,0); return d && d < now; }).length;
-  var taskColor = overdueTasks > 0 ? 'red' : activeTasks > 0 ? 'amber' : 'green';
-  var taskLabel = overdueTasks > 0 ? activeTasks + ' (⚠️' + overdueTasks + ' просрочено)' : activeTasks;
-  var riskGreen = DATA.filter(c => c.riskLevel === 'green').length;
-  var riskYellow = DATA.filter(c => c.riskLevel === 'yellow').length;
-  var riskRed = DATA.filter(c => c.riskLevel === 'red').length;
-  var riskNone = DATA.filter(c => !c.riskLevel || c.riskLevel === 'none').length;
-  var riskHtml = '<span style="color:#22c55e;font-weight:700">🟢 ' + riskGreen + '</span> · <span style="color:#eab308;font-weight:700">🟡 ' + riskYellow + '</span> · <span style="color:#ef4444;font-weight:700">🔴 ' + riskRed + '</span> · <span style="color:#64748b">⚪ ' + riskNone + '</span>';
-  document.getElementById('stats-bar').innerHTML = `
-    <div class="stat-card"><div class="label">Всего компаний</div><div class="value blue">${total}</div></div>
-    <div class="stat-card"><div class="label">Квалифицированных (≥18)</div><div class="value green">${qualified}</div></div>
-    <div class="stat-card"><div class="label">Встреч забукано</div><div class="value amber">${booked}</div></div>
-    <div class="stat-card"><div class="label">Встреч проведено</div><div class="value red">${done}</div></div>
-    <div class="stat-card"><div class="label">🔍 Анализ рисков</div><div class="value" style="font-size:16px">${riskHtml}</div></div>
-    <div class="stat-card"><div class="label">🔥 Активных задач</div><div class="value ${taskColor}">${taskLabel}</div></div>
-  `;
-}
+                    {/* Additional Fields */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-sm text-slate-400">Price</label>
+                            <InlineEditor
+                                value={company.price || ''}
+                                onSave={(val) => handleUpdateField('price', val)}
+                            />
+                        </div>
+                        <div>
+                            <label className="text-sm text-slate-400">Launch Date</label>
+                            <InlineEditor
+                                value={company.launch || ''}
+                                onSave={(val) => handleUpdateField('launch', val)}
+                            />
+                        </div>
+                    </div>
 
-function parseMeetingDate(str) {
-  if (!str) return null;
-  // Format: "Feb 27, 1:30 PM ET (пт)" or "Mar 2, 3:30 PM ET (пн)"
-  var m = str.match(/^(\w+)\s+(\d+),?\s+(\d+):(\d+)\s+(AM|PM)/i);
-  if (!m) return null;
-  var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-  var mon = months[m[1]];
-  if (mon === undefined) return null;
-  var day = parseInt(m[2]);
-  var hour = parseInt(m[3]);
-  var min = parseInt(m[4]);
-  if (m[5] === 'PM' && hour < 12) hour += 12;
-  if (m[5] === 'AM' && hour === 12) hour = 0;
-  var year = new Date().getFullYear();
-  var d = new Date(year, mon, day, hour, min);
-  // If date is far in the past (>6 months), assume next year
-  if (d < new Date() - 180*86400000) d.setFullYear(year + 1);
-  return d;
-}
+                    {/* Notes */}
+                    <div>
+                        <label className="text-sm text-slate-400">Notes</label>
+                        <textarea
+                            value={company.notes || ''}
+                            onChange={(e) => setEditNotes(e.target.value)}
+                            onBlur={() => handleUpdateField('notes', company.notes || '')}
+                            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 h-24"
+                            placeholder="Add notes..."
+                        />
+                    </div>
 
-function smartSort(arr) {
-  var now = new Date();
-  return arr.slice().sort(function(a, b) {
-    var dA = parseMeetingDate(a.meetingDate);
-    var dB = parseMeetingDate(b.meetingDate);
-    var hasA = dA !== null;
-    var hasB = dB !== null;
-    // Companies with meetings first, no meetings last
-    if (hasA && !hasB) return -1;
-    if (!hasA && hasB) return 1;
-    if (!hasA && !hasB) {
-      // Both no meetings: NO-GO at bottom, then by total score desc
-      if (a.decision === 'nogo' && b.decision !== 'nogo') return 1;
-      if (a.decision !== 'nogo' && b.decision === 'nogo') return -1;
-      return getTotal(b) - getTotal(a);
-    }
-    // Both have meetings
-    var futA = dA >= now;
-    var futB = dB >= now;
-    // Future meetings first (closest on top)
-    if (futA && futB) return dA - dB;
-    if (futA && !futB) return -1;
-    if (!futA && futB) return 1;
-    // Both past: most recent first
-    return dB - dA;
-  });
-}
+                    {/* Pros/Cons */}
+                    <div>
+                        <label className="text-sm text-slate-400">Pros & Cons</label>
+                        <textarea
+                            value={company.prosCons || company.pros || ''}
+                            onChange={(e) => setEditProsCons(e.target.value)}
+                            onBlur={() => handleUpdateField('prosCons', company.prosCons || company.pros || '')}
+                            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 h-24"
+                            placeholder="Add pros and cons..."
+                        />
+                    </div>
 
-function parseTaskDeadline(str) {
-  if (!str) return null;
-  // Supports: "2025-03-05", "Mar 5", "Mar 5, 2025"
-  var d = new Date(str);
-  if (!isNaN(d)) return d;
-  var m = str.match(/^(\w+)\s+(\d+)/);
-  if (m) {
-    var months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-    var mon = months[m[1]];
-    if (mon !== undefined) {
-      d = new Date(new Date().getFullYear(), mon, parseInt(m[2]));
-      if (d < new Date() - 180*86400000) d.setFullYear(d.getFullYear()+1);
-      return d;
-    }
-  }
-  return null;
-}
+                    {/* Checklist */}
+                    <div>
+                        <div className="flex justify-between items-center mb-3">
+                            <label className="text-sm text-slate-400 font-medium">Checklist</label>
+                            <button
+                                onClick={handleAddChecklistItem}
+                                className="text-xs bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-white"
+                            >
+                                + Add Item
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {company.checklist && company.checklist.length > 0 ? (
+                                company.checklist.map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 bg-slate-700 p-2 rounded">
+                                        <input
+                                            type="checkbox"
+                                            checked={item.done || false}
+                                            onChange={() => handleToggleChecklistItem(idx)}
+                                            className="w-4 h-4 rounded cursor-pointer"
+                                        />
+                                        <span className={`flex-1 ${item.done ? 'line-through text-slate-500' : 'text-slate-200'}`}>
+                                            {item.text}
+                                        </span>
+                                        <button
+                                            onClick={() => handleRemoveChecklistItem(idx)}
+                                            className="text-xs text-red-400 hover:text-red-300"
+                                        >
+                                            â
+                                        </button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-slate-500 text-sm italic">No checklist items yet</p>
+                            )}
+                        </div>
+                    </div>
 
-function renderTaskCell(c) {
-  if (!c.nextTask) return '<span class="task-none">—</span>';
-  var taskDone = c.taskDone === true;
-  var deadline = parseTaskDeadline(c.taskDeadline);
-  var now = new Date();
-  now.setHours(0,0,0,0);
-  var isOverdue = deadline && !taskDone && deadline < now;
-  var diffDays = deadline ? Math.ceil((deadline - now) / 86400000) : null;
-  var badgeClass = taskDone ? 'task-done' : isOverdue ? 'task-overdue' : 'task-active';
-  var deadlineClass = 'normal';
-  var deadlineLabel = '';
-  if (deadline) {
-    if (taskDone) { deadlineClass = 'normal'; deadlineLabel = c.taskDeadline; }
-    else if (isOverdue) { deadlineClass = 'urgent'; deadlineLabel = '⚠️ Просрочено! ' + c.taskDeadline; }
-    else if (diffDays === 0) { deadlineClass = 'urgent'; deadlineLabel = '🔴 Сегодня!'; }
-    else if (diffDays === 1) { deadlineClass = 'soon'; deadlineLabel = '🟡 Завтра'; }
-    else if (diffDays <= 3) { deadlineClass = 'soon'; deadlineLabel = '📅 ' + c.taskDeadline; }
-    else { deadlineClass = 'normal'; deadlineLabel = '📅 ' + c.taskDeadline; }
-  }
-  var checkbox = taskDone
-    ? '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отменить выполнение">☑️</span>'
-    : '<span onclick="toggleTask('+c.id+')" style="cursor:pointer;font-size:14px" title="Отметить выполненной">⬜</span>';
-  return '<div class="task-badge '+badgeClass+'" style="cursor:pointer" onclick="editRow('+c.id+')">'
-    + checkbox
-    + '<div>'
-    + '<span class="task-text" title="'+c.nextTask.replace(/"/g,'&quot;')+'">'+c.nextTask+'</span>'
-    + (deadlineLabel ? '<div class="task-deadline '+deadlineClass+'">'+deadlineLabel+'</div>' : '')
-    + (c.taskResponsible ? '<div class="task-responsible">👤 '+c.taskResponsible+'</div>' : '')
-    + '</div></div>';
-}
+                    {/* Metadata */}
+                    <div className="text-xs text-slate-500 border-t border-slate-700 pt-4">
+                        {company.updatedAt && (
+                            <p>Last updated: {new Date(company.updatedAt.toDate ? company.updatedAt.toDate() : company.updatedAt).toLocaleString()}</p>
+                        )}
+                        {company.lastEditedBy && <p>Last edited by: {company.lastEditedBy}</p>}
+                    </div>
 
-async function toggleTask(id) {
-  event.stopPropagation();
-  var c = DATA.find(x => x.id === id);
-  if (!c) return;
-  c.taskDone = !c.taskDone;
-  renderAll();
-  await saveToFirestore(c);
-}
+                    {/* Delete Button */}
+                    <button
+                        onClick={handleDeleteCompany}
+                        disabled={isDeleting}
+                        className="w-full py-2 bg-red-700 hover:bg-red-800 disabled:opacity-50 text-white font-medium rounded-lg transition-colors mt-4"
+                    >
+                        {isDeleting ? 'Deleting...' : 'Delete Company'}
+                    </button>
+                </div>
+            );
+        }
 
-function renderContactsPanel(c) {
-  var html = '';
-  if (c.contactName || c.contactEmail || c.contactPhone) {
-    html += '<div style="margin-bottom:6px"><strong>👤 ' + (c.contactName||'—') + '</strong>';
-    if (c.contactRole) html += ' <span style="color:#64748b;font-size:10px">(' + c.contactRole + ')</span>';
-    html += '</div>';
-    if (c.contactEmail) html += '<div style="font-size:11px">📧 <a href="mailto:'+c.contactEmail+'" style="color:#38bdf8">'+c.contactEmail+'</a></div>';
-    if (c.contactPhone) html += '<div style="font-size:11px">📱 '+c.contactPhone+'</div>';
-  }
-  if (c.pros && c.pros.length) {
-    html += '<h4 style="color:#34d399;margin-top:8px">💪 Сильные стороны</h4><ul style="margin:4px 0 4px 16px">';
-    c.pros.forEach(function(p){ html += '<li style="color:#34d399;font-size:11px">'+p+'</li>'; });
-    html += '</ul>';
-  }
-  if (c.cons && c.cons.length) {
-    html += '<h4 style="color:#f87171;margin-top:8px">⚠️ Слабые стороны</h4><ul style="margin:4px 0 4px 16px">';
-    c.cons.forEach(function(p){ html += '<li style="color:#f87171;font-size:11px">'+p+'</li>'; });
-    html += '</ul>';
-  }
-  if (c.checklist && c.checklist.length) {
-    html += '<h4 style="color:#fbbf24;margin-top:8px">❓ Чеклист</h4>';
-    c.checklist.forEach(function(q, qi){
-      html += '<div style="font-size:11px;margin:2px 0;cursor:pointer" onclick="toggleChecklist('+c.id+','+qi+')">';
-      html += q.done ? '☑️ <span style="text-decoration:line-through;color:#64748b">'+q.text+'</span>' : '⬜ '+q.text;
-      html += '</div>';
-    });
-  }
-  return html;
-}
+        // Company Row Component
+        function CompanyRow({ company, onClick, onFieldUpdate }) {
+            const totalScore = (company.s1 || 0) + (company.s2 || 0) + (company.s3 || 0) + (company.s4 || 0) + (company.s5 || 0);
 
-async function toggleChecklist(companyId, qIdx) {
-  event.stopPropagation();
-  var c = DATA.find(x => x.id === companyId);
-  if (!c || !c.checklist || !c.checklist[qIdx]) return;
-  c.checklist[qIdx].done = !c.checklist[qIdx].done;
-  renderAll();
-  await saveToFirestore(c);
-}
+            return (
+                <tr
+                    onClick={onClick}
+                    className="border-b border-slate-700 hover:bg-slate-700/50 cursor-pointer transition-colors"
+                >
+                    <td className="px-4 py-3 font-medium text-white">{company.name}</td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.status || 'none'}
+                            onSave={(val) => onFieldUpdate(company.id, 'status', val)}
+                            type="select"
+                            options={['none', 'contacted', 'booked', 'met', 'done', 'rejected']}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.decision || 'pending'}
+                            onSave={(val) => onFieldUpdate(company.id, 'decision', val)}
+                            type="select"
+                            options={['pending', 'go', 'nogo']}
+                        />
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                        <span className="font-bold text-blue-400">{totalScore}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.contactName || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'contactName', val)}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.contactEmail || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'contactEmail', val)}
+                            fieldName="contactEmail"
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.contactPhone || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'contactPhone', val)}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.nextTask || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'nextTask', val)}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.taskDeadline || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'taskDeadline', val)}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <InlineEditor
+                            value={company.taskResponsible || ''}
+                            onSave={(val) => onFieldUpdate(company.id, 'taskResponsible', val)}
+                        />
+                    </td>
+                    <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-3 h-3 rounded-full ${riskDots[company.riskLevel || 'none']}`}></div>
+                            <InlineEditor
+                                value={company.riskLevel || 'none'}
+                                onSave={(val) => onFieldUpdate(company.id, 'riskLevel', val)}
+                                type="select"
+                                options={['none', 'green', 'yellow', 'red']}
+                            />
+                        </div>
+                    </td>
+                </tr>
+            );
+        }
 
-function toggleContacts(id) {
-  var panel = document.getElementById('contacts-' + id);
-  if (panel) panel.classList.toggle('show');
-}
+        // Add Company Modal
+        function AddCompanyModal({ onClose, onAdd, currentUser }) {
+            const [formData, setFormData] = useState({
+                name: '',
+                url: '',
+                status: 'none',
+                decision: 'pending'
+            });
+            const [isAdding, setIsAdding] = useState(false);
 
-function toggleMeetingsLog(id) {
-  var panel = document.getElementById('meetingslog-' + id);
-  if (panel) panel.classList.toggle('show');
-}
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!formData.name.trim()) {
+                    alert('Company name is required');
+                    return;
+                }
 
-function renderMeetingsLogInline(c) {
-  var logs = c.meetingsLog || [];
-  if (!logs.length) return '';
-  var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
-  var html = '<h4 style="color:#38bdf8;margin-bottom:6px">📝 История встреч</h4>';
-  logs.forEach(function(log) {
-    html += '<div style="border-left:2px solid #334155;padding-left:8px;margin-bottom:8px">'
-      + '<div style="font-size:11px"><strong style="color:#38bdf8">' + log.date + '</strong> '
-      + '<span style="color:#64748b;font-size:10px">(' + (typeLabels[log.type]||log.type) + ')</span></div>'
-      + '<div style="font-size:11px;color:#cbd5e1;margin-top:2px;white-space:pre-wrap">' + log.summary + '</div>'
-      + '</div>';
-  });
-  return html;
-}
+                setIsAdding(true);
+                try {
+                    const newCompanyRef = await db.collection('companies').add({
+                        name: formData.name,
+                        url: formData.url,
+                        status: formData.status,
+                        decision: formData.decision,
+                        s1: 0,
+                        s2: 0,
+                        s3: 0,
+                        s4: 0,
+                        s5: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastEditedBy: currentUser.email
+                    });
+                    onAdd({ id: newCompanyRef.id, ...formData, s1: 0, s2: 0, s3: 0, s4: 0, s5: 0 });
+                    onClose();
+                } catch (err) {
+                    console.error('Error adding company:', err);
+                    alert('Failed to add company: ' + err.message);
+                    setIsAdding(false);
+                }
+            };
 
-function renderTable() {
-  var filtered = DATA;
-  if (currentFilter === 'qualified') filtered = DATA.filter(isQualified);
-  else if (currentFilter === 'booked') filtered = DATA.filter(c => c.status === 'booked');
-  else if (currentFilter === 'done') filtered = DATA.filter(c => c.status === 'done');
-  else if (currentFilter === 'tasks') filtered = DATA.filter(c => c.nextTask && !c.taskDone);
-  else if (currentFilter === 'risk-red') filtered = DATA.filter(c => c.riskLevel === 'red');
-  else if (currentFilter === 'risk-green') filtered = DATA.filter(c => c.riskLevel === 'green');
-  else if (currentFilter === 'risk-none') filtered = DATA.filter(c => !c.riskLevel || c.riskLevel === 'none');
+            return (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-slate-800 rounded-lg p-6 w-full max-w-md">
+                        <h2 className="text-2xl font-bold text-white mb-4">Add New Company</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Company Name *</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-500"
+                                    placeholder="e.g., TechCorp Inc"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Website URL</label>
+                                <input
+                                    type="url"
+                                    value={formData.url}
+                                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-500"
+                                    placeholder="https://example.com"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Status</label>
+                                <select
+                                    value={formData.status}
+                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-500"
+                                >
+                                    {['none', 'contacted', 'booked', 'met', 'done', 'rejected'].map(s => (
+                                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-slate-400 mb-2">Decision</label>
+                                <select
+                                    value={formData.decision}
+                                    onChange={(e) => setFormData({ ...formData, decision: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-500"
+                                >
+                                    {['pending', 'go', 'nogo'].map(d => (
+                                        <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isAdding}
+                                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
+                                >
+                                    {isAdding ? 'Adding...' : 'Add Company'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
 
-  filtered = smartSort(filtered);
+        // Main Dashboard Component
+        function Dashboard({ user, onLogout }) {
+            const [companies, setCompanies] = useState([]);
+            const [filteredCompanies, setFilteredCompanies] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [showAddModal, setShowAddModal] = useState(false);
+            const [expandedId, setExpandedId] = useState(null);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [statusFilter, setStatusFilter] = useState('');
+            const [decisionFilter, setDecisionFilter] = useState('');
+            const [riskFilter, setRiskFilter] = useState('');
 
-  var html = '';
-  filtered.forEach(function(c, i) {
-    var t = getTotal(c);
-    var tClass = t >= 20 ? 'total-high' : t >= 18 ? 'total-mid' : 'total-low';
-    var topBadge = t >= 20 ? '<span style="background:#059669;color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">TOP</span>' : '';
-    var rowBorder = t >= 20 ? 'border-left:3px solid #34d399;' : t < 18 ? 'border-left:3px solid #f87171;' : '';
-    // Highlight upcoming meetings
-    var meetDate = parseMeetingDate(c.meetingDate);
-    var now = new Date();
-    var urgentStyle = '';
-    var meetBadge = '';
-    if (meetDate) {
-      var diffH = (meetDate - now) / 3600000;
-      if (diffH > 0 && diffH <= 24) { urgentStyle = 'background:rgba(251,191,36,0.08);'; meetBadge = '<span style="background:#f59e0b;color:#000;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СЕГОДНЯ</span>'; }
-      else if (diffH > 24 && diffH <= 48) { urgentStyle = 'background:rgba(56,189,248,0.06);'; meetBadge = '<span style="background:#0ea5e9;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">ЗАВТРА</span>'; }
-      else if (diffH > 0 && diffH <= 168) { meetBadge = '<span style="background:#6366f1;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle">СКОРО</span>'; }
-    }
-    var statusLabels = {none:'Не начат',contacted:'Форма/Email',booked:'Забукана',done:'✅ Проведена',rejected:'Не подходит'};
-    var decLabels = {pending:'⏳', go:'✅ GO', nogo:'❌ NO-GO'};
-    var decClass = {pending:'decision-pending', go:'decision-go', nogo:'decision-nogo'};
-    html += `<tr data-id="${c.id}" style="${rowBorder}${urgentStyle}">
-      <td style="color:#475569">${i+1}</td>
-      <td><div class="company-name"><span class="risk-dot risk-dot-${c.riskLevel||'none'}" title="${{green:'🟢 Низкий риск',yellow:'🟡 Средний риск',red:'🔴 Высокий риск',none:'Не проверена'}[c.riskLevel||'none']}"></span>${c.name}${topBadge}${c.riskLevel && c.riskLevel !== 'none' ? '<span class="risk-label risk-label-'+c.riskLevel+'">'+(c.riskLevel==='green'?'LOW RISK':c.riskLevel==='yellow'?'MED RISK':'HIGH RISK')+'</span>' : ''}</div><div class="company-url"><a href="${c.url}" target="_blank">${c.url.replace('https://','')}</a></div></td>
-      <td class="score-cell"><span class="score-badge score-${c.scores.s1}">${c.scores.s1}</span></td>
-      <td class="score-cell"><span class="score-badge score-${c.scores.s2}">${c.scores.s2}</span></td>
-      <td class="score-cell"><span class="score-badge score-${c.scores.s3}">${c.scores.s3}</span></td>
-      <td class="score-cell"><span class="score-badge score-${c.scores.s4}">${c.scores.s4}</span></td>
-      <td class="score-cell"><span class="score-badge score-${c.scores.s5}">${c.scores.s5}</span></td>
-      <td class="total-score ${tClass}">${t}/25</td>
-      <td><span class="status-badge status-${c.status}">${statusLabels[c.status]||c.status}</span></td>
-      <td style="font-size:12px;white-space:nowrap">${c.meetingDate ? c.meetingDate + meetBadge + (c.status === 'done' || c.status === 'rejected' ? '' : (c.meetingLink ? '<br><a href="'+c.meetingLink+'" target="_blank" style="color:#38bdf8;font-size:11px;font-weight:600;">🔗 Подключиться</a>' : '<br><span style="color:#475569;font-size:10px;cursor:pointer" onclick="editRow('+c.id+')">+ добавить ссылку</span>')) : '—'}</td>
-      <td style="font-size:12px">${c.price||'—'}</td>
-      <td style="font-size:12px">${c.launch||'—'}</td>
-      <td><span class="${decClass[c.decision]}">${decLabels[c.decision]}</span></td>
-      <td>${renderTaskCell(c)}</td>
-      <td class="notes-cell">
-        <span class="editable" title="${(c.notes||'').replace(/"/g,'&quot;')}" onclick="editRow(${c.id})">${c.notes ? c.notes.substring(0,50)+'...' : 'Нажми для ред.'}</span>
-        ${c.meetingSummary ? '<span class="summary-toggle" onclick="toggleSummary('+c.id+')">📋 Итоги встречи</span><div class="summary-panel" id="summary-'+c.id+'"><h4>Вердикт</h4><div class="verdict verdict-'+c.meetingSummary.verdict+'">'+c.meetingSummary.verdictText+'</div><h4>Цены</h4>'+c.meetingSummary.pricing+'<h4>Контакты</h4>'+c.meetingSummary.keyContacts+'<h4>Партнёры</h4>'+c.meetingSummary.partners+'<h4>Следующие шаги</h4>'+c.meetingSummary.nextSteps+'</div>' : ''}
-        ${(c.contactName || (c.pros && c.pros.length) || (c.checklist && c.checklist.length)) ? '<span class="summary-toggle" onclick="toggleContacts('+c.id+')">👥 Контакты/Инфо</span><div class="summary-panel" id="contacts-'+c.id+'">'+renderContactsPanel(c)+'</div>' : ''}
-        ${(c.meetingsLog && c.meetingsLog.length) ? '<span class="summary-toggle" onclick="toggleMeetingsLog('+c.id+')">📝 Встречи ('+c.meetingsLog.length+')</span><div class="summary-panel" id="meetingslog-'+c.id+'">'+renderMeetingsLogInline(c)+'</div>' : ''}
-      </td>
-      <td><div class="row-actions">
-        <button class="row-btn" onclick="editRow(${c.id})" title="Редактировать">✏️</button>
-        <button class="row-btn" onclick="deleteRow(${c.id})" title="Удалить">🗑️</button>
-      </div></td>
-    </tr>`;
-  });
-  document.getElementById('table-body').innerHTML = html;
-}
+            // Load companies from Firestore
+            useEffect(() => {
+                setLoading(true);
+                const unsubscribe = db.collection('companies')
+                    .onSnapshot((snapshot) => {
+                        const docs = [];
+                        snapshot.forEach((doc) => {
+                            docs.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+                        // Sort by total score descending
+                        docs.sort((a, b) => {
+                            const scoreA = (a.s1 || 0) + (a.s2 || 0) + (a.s3 || 0) + (a.s4 || 0) + (a.s5 || 0);
+                            const scoreB = (b.s1 || 0) + (b.s2 || 0) + (b.s3 || 0) + (b.s4 || 0) + (b.s5 || 0);
+                            return scoreB - scoreA;
+                        });
+                        setCompanies(docs);
+                        setLoading(false);
+                    }, (error) => {
+                        console.error('Error loading companies:', error);
+                        setLoading(false);
+                    });
 
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  renderTable();
-}
+                return () => unsubscribe();
+            }, []);
 
-function editRow(id) {
-  editingId = id;
-  var c = DATA.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('modal-title').textContent = 'Редактировать: ' + c.name;
-  document.getElementById('m-name').value = c.name;
-  document.getElementById('m-url').value = c.url;
-  document.getElementById('m-contact').value = c.contact || '';
-  document.getElementById('m-s1').value = c.scores.s1;
-  document.getElementById('m-s2').value = c.scores.s2;
-  document.getElementById('m-s3').value = c.scores.s3;
-  document.getElementById('m-s4').value = c.scores.s4;
-  document.getElementById('m-s5').value = c.scores.s5;
-  document.getElementById('m-status').value = c.status;
-  document.getElementById('m-risk-level').value = c.riskLevel || 'none';
-  document.getElementById('m-meeting-date').value = c.meetingDate || '';
-  document.getElementById('m-meeting-link').value = c.meetingLink || '';
-  document.getElementById('m-price').value = c.price || '';
-  document.getElementById('m-launch').value = c.launch || '';
-  document.getElementById('m-decision').value = c.decision || 'pending';
-  document.getElementById('m-notes').value = c.notes || '';
-  document.getElementById('m-next-task').value = c.nextTask || '';
-  document.getElementById('m-task-deadline').value = c.taskDeadline || '';
-  document.getElementById('m-task-responsible').value = c.taskResponsible || '';
-  document.getElementById('m-task-done').checked = c.taskDone || false;
-  document.getElementById('m-contact-name').value = c.contactName || '';
-  document.getElementById('m-contact-email').value = c.contactEmail || '';
-  document.getElementById('m-contact-phone').value = c.contactPhone || '';
-  document.getElementById('m-contact-role').value = c.contactRole || '';
-  document.getElementById('m-pros').value = (c.pros || []).join('; ');
-  document.getElementById('m-pros-cons').value = (c.cons || []).join('; ');
-  document.getElementById('m-checklist').value = (c.checklist || []).map(q => (q.done ? '[x] ' : '') + q.text).join('; ');
-  renderMeetingsLog();
-  document.getElementById('edit-modal').classList.add('show');
-}
+            // Apply filters
+            useEffect(() => {
+                let filtered = companies;
 
-function addCompany() {
-  editingId = null;
-  document.getElementById('modal-title').textContent = 'Добавить компанию';
-  ['m-name','m-url','m-contact','m-meeting-date','m-meeting-link','m-price','m-launch','m-notes','m-next-task','m-task-deadline','m-task-responsible','m-contact-name','m-contact-email','m-contact-phone','m-contact-role','m-pros','m-pros-cons','m-checklist'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('m-task-done').checked = false;
-  ['m-s1','m-s2','m-s3','m-s4','m-s5'].forEach(id => document.getElementById(id).value = '3');
-  document.getElementById('m-status').value = 'none';
-  document.getElementById('m-risk-level').value = 'none';
-  document.getElementById('m-decision').value = 'pending';
-  document.getElementById('m-meetings-log').innerHTML = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
-  document.getElementById('edit-modal').classList.add('show');
-}
+                if (searchTerm) {
+                    filtered = filtered.filter(c =>
+                        c.name.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                }
 
-function closeModal() { document.getElementById('edit-modal').classList.remove('show'); }
+                if (statusFilter) {
+                    filtered = filtered.filter(c => c.status === statusFilter);
+                }
 
-async function saveModal() {
-  var obj = {
-    name: document.getElementById('m-name').value,
-    url: document.getElementById('m-url').value,
-    contact: document.getElementById('m-contact').value,
-    scores: {
-      s1: parseInt(document.getElementById('m-s1').value),
-      s2: parseInt(document.getElementById('m-s2').value),
-      s3: parseInt(document.getElementById('m-s3').value),
-      s4: parseInt(document.getElementById('m-s4').value),
-      s5: parseInt(document.getElementById('m-s5').value)
-    },
-    status: document.getElementById('m-status').value,
-    riskLevel: document.getElementById('m-risk-level').value,
-    meetingDate: document.getElementById('m-meeting-date').value,
-    meetingLink: document.getElementById('m-meeting-link').value,
-    price: document.getElementById('m-price').value,
-    launch: document.getElementById('m-launch').value,
-    decision: document.getElementById('m-decision').value,
-    notes: document.getElementById('m-notes').value,
-    nextTask: document.getElementById('m-next-task').value,
-    taskDeadline: document.getElementById('m-task-deadline').value,
-    taskResponsible: document.getElementById('m-task-responsible').value,
-    taskDone: document.getElementById('m-task-done').checked,
-    contactName: document.getElementById('m-contact-name').value,
-    contactEmail: document.getElementById('m-contact-email').value,
-    contactPhone: document.getElementById('m-contact-phone').value,
-    contactRole: document.getElementById('m-contact-role').value,
-    pros: document.getElementById('m-pros').value.split(';').map(s=>s.trim()).filter(Boolean),
-    cons: document.getElementById('m-pros-cons').value.split(';').map(s=>s.trim()).filter(Boolean),
-    checklist: document.getElementById('m-checklist').value.split(';').map(s => { s = s.trim(); var done = s.startsWith('[x]'); return {text: s.replace(/^\[x\]\s*/, ''), done: done}; }).filter(q => q.text)
-  };
-  if (editingId) {
-    var idx = DATA.findIndex(x => x.id === editingId);
-    if (idx >= 0) {
-      // Preserve meetingSummary and meetingsLog
-      if (DATA[idx].meetingSummary) obj.meetingSummary = DATA[idx].meetingSummary;
-      if (DATA[idx].meetingsLog) obj.meetingsLog = DATA[idx].meetingsLog;
-      // Preserve taskDone toggle state if task text unchanged
-      if (!obj.nextTask && DATA[idx].nextTask) { obj.nextTask = DATA[idx].nextTask; obj.taskDeadline = DATA[idx].taskDeadline; obj.taskResponsible = DATA[idx].taskResponsible; obj.taskDone = DATA[idx].taskDone; }
-      obj.id = editingId;
-      DATA[idx] = obj;
-    }
-  } else {
-    obj.id = Math.max(0, ...DATA.map(x => x.id)) + 1;
-    DATA.push(obj);
-  }
-  closeModal();
-  renderAll();
-  // Sync to Firestore
-  await saveToFirestore(obj);
-}
+                if (decisionFilter) {
+                    filtered = filtered.filter(c => c.decision === decisionFilter);
+                }
 
-async function deleteRow(id) {
-  if (!confirm('Удалить эту компанию?')) return;
-  DATA = DATA.filter(x => x.id !== id);
-  renderAll();
-  // Sync delete to Firestore
-  await deleteFromFirestore(id);
-}
+                if (riskFilter) {
+                    filtered = filtered.filter(c => c.riskLevel === riskFilter);
+                }
 
-function toggleSummary(id) {
-  var panel = document.getElementById('summary-' + id);
-  if (panel) panel.classList.toggle('show');
-}
+                setFilteredCompanies(filtered);
+            }, [companies, searchTerm, statusFilter, decisionFilter, riskFilter]);
 
-// ========== MEETING LOG ==========
-function renderMeetingsLog() {
-  var c = DATA.find(x => x.id === editingId);
-  var logs = (c && c.meetingsLog) || [];
-  var html = '';
-  if (logs.length === 0) {
-    html = '<div style="color:#475569;font-size:12px;text-align:center;padding:10px">Пока нет записей о встречах</div>';
-  } else {
-    var typeLabels = {first:'Первичная',followup:'Follow-up',demo:'Демо',call:'Звонок',email:'Email'};
-    logs.forEach(function(log, i) {
-      var typeClass = log.type === 'first' ? 'log-type-first' : log.type === 'followup' ? 'log-type-followup' : log.type === 'demo' ? 'log-type-demo' : '';
-      html += '<div class="meeting-log-entry">'
-        + '<div><span class="log-date">📅 ' + log.date + '</span>'
-        + '<span class="log-type ' + typeClass + '">' + (typeLabels[log.type] || log.type) + '</span></div>'
-        + '<div class="log-summary">' + log.summary + '</div>'
-        + '<button class="log-delete" onclick="deleteMeetingLog(' + i + ')" title="Удалить">✕</button>'
-        + '</div>';
-    });
-  }
-  document.getElementById('m-meetings-log').innerHTML = html;
-}
+            const handleFieldUpdate = async (companyId, field, value) => {
+                try {
+                    const docRef = db.collection('companies').doc(companyId);
+                    const updateData = {
+                        [field]: value,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastEditedBy: user.email
+                    };
+                    await docRef.update(updateData);
+                } catch (err) {
+                    console.error('Error updating field:', err);
+                    alert('Failed to update: ' + err.message);
+                }
+            };
 
-function addMeetingLog() {
-  var date = document.getElementById('m-meeting-log-date').value.trim();
-  var type = document.getElementById('m-meeting-log-type').value;
-  var summary = document.getElementById('m-meeting-log-summary').value.trim();
-  if (!date || !summary) { alert('Укажите дату и краткое содержание встречи'); return; }
-  var c = DATA.find(x => x.id === editingId);
-  if (!c) return;
-  if (!c.meetingsLog) c.meetingsLog = [];
-  c.meetingsLog.unshift({ date: date, type: type, summary: summary, addedAt: new Date().toISOString() });
-  document.getElementById('m-meeting-log-date').value = '';
-  document.getElementById('m-meeting-log-summary').value = '';
-  renderMeetingsLog();
-}
+            const handleAddCompany = (newCompany) => {
+                setCompanies([newCompany, ...companies]);
+                setShowAddModal(false);
+            };
 
-async function deleteMeetingLog(idx) {
-  if (!confirm('Удалить эту запись?')) return;
-  var c = DATA.find(x => x.id === editingId);
-  if (c && c.meetingsLog) {
-    c.meetingsLog.splice(idx, 1);
-    renderMeetingsLog();
-  }
-}
+            const handleDeleteCompany = (companyId) => {
+                setCompanies(companies.filter(c => c.id !== companyId));
+                setExpandedId(null);
+            };
 
-function renderAll() { renderStats(); renderTable(); }
+            const expandedCompany = companies.find(c => c.id === expandedId);
 
-function saveFile() {
-  var html = document.documentElement.outerHTML;
-  var dataStr = 'var SEED_DATA = ' + JSON.stringify(DATA, null, 2) + ';';
-  html = html.replace(/var SEED_DATA = \[[\s\S]*?\];/, dataStr);
-  var blob = new Blob(['<!DOCTYPE html>\n<html lang="ru">\n' + html.split('<html lang="ru">')[1]], {type: 'text/html'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'AVG_Telehealth_Tracker.html';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  alert('Файл сохранён как бэкап! Основные данные хранятся в Firebase.');
-}
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-slate-300">Loading companies...</p>
+                        </div>
+                    </div>
+                );
+            }
 
-// Close modal on outside click
-document.getElementById('edit-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+            return (
+                <div className="min-h-screen bg-slate-900">
+                    {/* Header */}
+                    <div className="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
+                        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <div>
+                                <h1 className="text-2xl font-bold text-white">AVG Telehealth Partner Tracker</h1>
+                                <p className="text-sm text-slate-400">Logged in as {user.email}</p>
+                            </div>
+                            <button
+                                onClick={onLogout}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </div>
 
-// ========== START APP ==========
-initApp();
-</script>
+                    <div className="max-w-7xl mx-auto px-4 py-6">
+                        {/* Controls */}
+                        <div className="mb-6 space-y-4">
+                            <div className="flex gap-2 flex-wrap">
+                                <button
+                                    onClick={() => setShowAddModal(true)}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                                >
+                                    + Add Company
+                                </button>
+                            </div>
+
+                            {/* Filters */}
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                <input
+                                    type="text"
+                                    placeholder="Search by company name..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                                />
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-blue-500"
+                                >
+                                    <option value="">All Status</option>
+                                    {['none', 'contacted', 'booked', 'met', 'done', 'rejected'].map(s => (
+                                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={decisionFilter}
+                                    onChange={(e) => setDecisionFilter(e.target.value)}
+                                    className="px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-blue-500"
+                                >
+                                    <option value="">All Decisions</option>
+                                    {['pending', 'go', 'nogo'].map(d => (
+                                        <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={riskFilter}
+                                    onChange={(e) => setRiskFilter(e.target.value)}
+                                    className="px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-blue-500"
+                                >
+                                    <option value="">All Risk Levels</option>
+                                    {['green', 'yellow', 'red', 'none'].map(r => (
+                                        <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <p className="text-sm text-slate-400">
+                                Showing {filteredCompanies.length} of {companies.length} companies
+                            </p>
+                        </div>
+
+                        {/* Expanded Company Card */}
+                        {expandedCompany && (
+                            <CompanyCard
+                                company={expandedCompany}
+                                onClose={() => setExpandedId(null)}
+                                onUpdate={(updated) => {
+                                    setCompanies(companies.map(c => c.id === updated.id ? updated : c));
+                                }}
+                                onDelete={handleDeleteCompany}
+                                currentUser={user}
+                            />
+                        )}
+
+                        {/* Table */}
+                        <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-x-auto">
+                            {filteredCompanies.length === 0 ? (
+                                <div className="p-8 text-center text-slate-400">
+                                    <p>No companies found. Try adjusting your filters or add a new company.</p>
+                                </div>
+                            ) : (
+                                <table className="w-full">
+                                    <thead className="bg-slate-700 border-b border-slate-600">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Name</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Status</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Decision</th>
+                                            <th className="px-4 py-3 text-center text-sm font-semibold text-slate-200">Score</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Contact</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Email</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Phone</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Next Task</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Deadline</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Responsible</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-200">Risk</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredCompanies.map(company => (
+                                            <CompanyRow
+                                                key={company.id}
+                                                company={company}
+                                                onClick={() => setExpandedId(expandedId === company.id ? null : company.id)}
+                                                onFieldUpdate={handleFieldUpdate}
+                                            />
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Add Company Modal */}
+                    {showAddModal && (
+                        <AddCompanyModal
+                            onClose={() => setShowAddModal(false)}
+                            onAdd={handleAddCompany}
+                            currentUser={user}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [user, setUser] = useState(null);
+            const [loading, setLoading] = useState(true);
+
+            useEffect(() => {
+                const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+                    setUser(currentUser);
+                    setLoading(false);
+                });
+
+                return () => unsubscribe();
+            }, []);
+
+            if (loading) {
+                return (
+                    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-slate-300">Initializing...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            return user ? (
+                <Dashboard
+                    user={user}
+                    onLogout={() => auth.signOut()}
+                />
+            ) : (
+                <LoginPage
+                    onLoginSuccess={() => {}}
+                    loading={loading}
+                />
+            );
+        }
+
+        // Render the app
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
 </body>
 </html>
